@@ -1,0 +1,130 @@
+module mojo_top (
+    input clk,              // 50MHz clock
+    input rst_n,            // reset button (active low)
+    output led [8],         // 8 user controllable LEDs
+    input cclk,             // configuration clock, AVR ready when high
+    output spi_miso,        // AVR SPI MISO
+    input spi_ss,           // AVR SPI Slave Select
+    input spi_mosi,         // AVR SPI MOSI
+    input spi_sck,          // AVR SPI Clock
+    output spi_channel [4], // AVR general purpose pins (used by default to select ADC channel)
+    input avr_tx,           // AVR TX (FPGA RX)
+    output avr_rx,          // AVR RX (FPGA TX)
+    input avr_rx_busy,      // AVR RX buffer full
+    output io_led [3][8],   // LEDs on IO Shield
+    output io_seg [8],      // 7-segment LEDs on IO Shield
+    output io_sel [4],      // Digit select on IO Shield
+    input io_button [5],    // 5 buttons on IO Shield
+    input io_dip [3][8],    // DIP switches on IO Shield
+    input carry,
+    input sum
+    
+  ){
+  sig rst;                  // reset signal
+  
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond;
+      
+    .rst(rst){
+      dff counter[30]; // define bits for counter
+      fsm state = {A, B, C, D, E, F, G, H, END}; // define all states
+    }
+  }
+  
+  const CYCLE = 29; // define no. of cycles to go through base on bits
+  
+  always {
+    reset_cond.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond.out;   // conditioned reset
+    
+    io_led = 3x{{8h00}}; // turn off io led
+    led = 8h00; // turn off led
+    
+    
+    spi_miso = bz;          // not using SPI
+    spi_channel = bzzzz;    // not using flags
+    avr_rx = bz;            // not using serial port
+    
+    io_seg = 8hff;          // turn segments off
+    io_sel = 4hf;           // select no digits
+    
+    case(state.q){
+      state.A: //000
+        led[2:0] = 0;
+        if (carry == 0 && sum == 0) {io_led[2][7] = 1;} // lights up corresponding test LED if the test passes
+        counter.d = counter.q+1; //increase the bits of the counter every 2 cycles
+        if (counter.q[CYCLE] == 1) {
+          state.d = state.B;
+          counter.d = 0;
+        } // moves to next test state when the device has gone through an arbitrary number of loops
+          
+      state.B: //001
+        led[2:0] = 1;
+        if(carry == 0 && sum == 1) {io_led[2][6] = 1;}
+        counter.d = counter.q+1;
+        if (counter.q[CYCLE] == 1) {
+          state.d = state.C;
+          counter.d = 0;
+        }
+        
+      state.C: //010
+        led[2:0] = 2;
+        if(carry == 0 && sum == 1) {io_led[2][5] = 1;}
+        counter.d = counter.q+1;
+        if (counter.q[CYCLE] == 1) {
+          state.d = state.D;
+          counter.d = 0;
+        }
+        
+      state.D: //011
+        led[2:0] = 3;
+        if(carry == 1 && sum == 0) {io_led[2][4] = 1;}
+        counter.d = counter.q+1;
+        if (counter.q[CYCLE] == 1) {
+          state.d = state.E;
+          counter.d = 0;
+        }
+        
+      state.E: //100
+        led[2:0] = 4;
+        if(carry == 0 && sum == 1) {io_led[2][3] = 1;}
+        counter.d = counter.q+1;
+        if (counter.q[CYCLE] == 1) {
+          state.d = state.F;
+          counter.d = 0;
+        }
+        
+      state.F: //101
+        led[2:0] = 5;
+        if(carry == 1 && sum == 1) {io_led[2][2] = 1;}
+        counter.d = counter.q+1;
+        if (counter.q[CYCLE] == 1) {
+          state.d = state.G;
+          counter.d = 0;
+        }
+        
+      state.G: //110
+        led[2:0] = 6;
+        if(carry == 1 && sum == 0) {io_led[2][1] = 1;}
+        counter.d = counter.q+1;
+        if (counter.q[CYCLE] == 1) {
+          state.d = state.H;
+          counter.d = 0;
+        }
+        
+      state.H: //111
+        led[2:0] = 7;
+        if(carry == 1 && sum == 1) {io_led[2][0] = 1;}
+        counter.d = counter.q+1;
+        if (counter.q[CYCLE] == 1) {
+          state.d = state.END;
+          counter.d = 0;
+        }
+        
+      state.END: //END
+        io_led[0][7:0] = -1; //lights up last set of IO LED to signify test end
+    }
+  }
+}

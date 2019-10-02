@@ -1,0 +1,4 @@
+NET "carry" LOC = P51;
+NET "carry" IOSTANDARD = LVTTL;
+NET "sum" LOC = P50;
+NET "sum" IOSTANDARD = LVTTL;
