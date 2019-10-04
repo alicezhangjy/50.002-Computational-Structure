@@ -1,2 +1,5 @@
 NET "carry"  LOC = P51 | IOSTANDARD = LVTTL;
 NET "sum"  LOC = P50 | IOSTANDARD = LVTTL;
+NET "switch<1>" LOC = P27 | IOSTANDARD = LVTTL;
+NET "switch<2>" LOC = P30 | IOSTANDARD = LVTTL;
+NET "switch<3>" LOC = P33 | IOSTANDARD = LVTTL; 
