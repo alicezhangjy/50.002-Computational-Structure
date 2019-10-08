@@ -18,7 +18,7 @@ module mojo_top (
     input io_dip [3][8],    // DIP switches on IO Shield
     input carry,            // carry is pin 51 
     input sum,              // sum is pin 50
-    output switch [3]
+    output switch [3]       // switches are pin 33,30,27 respectively
     
   ){
   sig rst;                  // reset signal
@@ -53,7 +53,12 @@ module mojo_top (
     
     case(state.q){
       state.IDLE: //IDLE
-        if (io_button[0] == 1) {state.d = state.A;} //start test 
+        if (io_button[0] == 1) {state.d = state.A;} //start automatic testing
+        switch[0] = io_dip[2][7]; //for manual testing in idle state
+        switch[1] = io_dip[2][6];
+        switch[2] = io_dip[2][5];
+        io_led[2][7] =  carry;
+        io_led[2][6] = sum;
         
       state.A: //000
         led[2:0] = 0;
