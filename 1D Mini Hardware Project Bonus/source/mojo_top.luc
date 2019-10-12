@@ -17,8 +17,7 @@ module mojo_top (
     input io_button [5],    // 5 buttons on IO Shield
     input io_dip [3][8],    // DIP switches on IO Shield
     input carry,            // carry is pin 51 
-    input sum,              // sum is pin 50
-    output switch [3]       // switches are pin 33,30,27 respectively
+    input sum              // sum is pin 50
     
   ){
   sig rst;                  // reset signal
@@ -27,7 +26,7 @@ module mojo_top (
     // The reset conditioner is used to synchronize the reset signal to the FPGA
     // clock. This ensures the entire FPGA comes out of reset at the same time.
     reset_conditioner reset_cond;
-      
+    
     .rst(rst){
       dff counter[27]; // define bits for counter
       fsm state = {IDLE, A, B, C, D, E, F, G, H, END}; // define all states
@@ -42,7 +41,6 @@ module mojo_top (
     
     io_led = 3x{{8h00}}; // turn off io led
     led = 8h00; // turn off led
-    switch = 8h00;
     
     spi_miso = bz;          // not using SPI
     spi_channel = bzzzz;    // not using flags
@@ -51,18 +49,19 @@ module mojo_top (
     io_seg = 8hff;          // turn segments off
     io_sel = 4hf;           // select no digits
     
+    
     case(state.q){
       state.IDLE: //IDLE
         if (io_button[0] == 1) {state.d = state.A;} //start automatic testing
-        switch[0] = io_dip[2][7]; //for manual testing in idle state
-        switch[1] = io_dip[2][6];
-        switch[2] = io_dip[2][5];
-        io_led[2][7] =  carry;
+        led[0] = io_dip[0][0]; //for manual testing in idle state
+        led[1] = io_dip[0][1];
+        led[2] = io_dip[0][2];
+        io_led[2][7] = carry;
         io_led[2][6] = sum;
         
       state.A: //000
         led[2:0] = 0;
-        switch[2:0] = 0;
+        io_led[1][2:0] = 0;
         if (carry == 0 && sum == 0) {io_led[2][7] = 1;} // lights up corresponding test LED if the test passes
         counter.d = counter.q+1; //increase the bits of the counter every 2 cycles
         if (counter.q[CYCLE] == 1) { // moves to next test state when the device has gone through an arbitrary number of loops
@@ -72,7 +71,7 @@ module mojo_top (
           
       state.B: //001
         led[2:0] = 1;
-        switch[2:0] = 1;
+        io_led[1][2:0] = 1;
         if(carry == 0 && sum == 1) {io_led[2][6] = 1;}
         counter.d = counter.q+1;
         if (counter.q[CYCLE] == 1) {
@@ -82,7 +81,7 @@ module mojo_top (
         
       state.C: //010
         led[2:0] = 2;
-        switch[2:0] = 2;
+        io_led[1][2:0] = 2;
         if(carry == 0 && sum == 1) {io_led[2][5] = 1;}
         counter.d = counter.q+1;
         if (counter.q[CYCLE] == 1) {
@@ -92,7 +91,7 @@ module mojo_top (
         
       state.D: //011
         led[2:0] = 3;
-        switch[2:0] = 3;
+        io_led[1][2:0] = 3;
         if(carry == 1 && sum == 0) {io_led[2][4] = 1;}
         counter.d = counter.q+1;
         if (counter.q[CYCLE] == 1) {
@@ -102,7 +101,7 @@ module mojo_top (
         
       state.E: //100
         led[2:0] = 4;
-        switch[2:0] = 4;
+        io_led[1][2:0] = 4;
         if(carry == 0 && sum == 1) {io_led[2][3] = 1;}
         counter.d = counter.q+1;
         if (counter.q[CYCLE] == 1) {
@@ -112,7 +111,7 @@ module mojo_top (
         
       state.F: //101
         led[2:0] = 5;
-        switch[2:0] = 5;
+        io_led[1][2:0] = 5;
         if(carry == 1 && sum == 0) {io_led[2][2] = 1;}
         counter.d = counter.q+1;
         if (counter.q[CYCLE] == 1) {
@@ -122,7 +121,7 @@ module mojo_top (
         
       state.G: //110
         led[2:0] = 6;
-        switch[2:0] = 6;
+        io_led[1][2:0] = 6;
         if(carry == 1 && sum == 0) {io_led[2][1] = 1;}
         counter.d = counter.q+1;
         if (counter.q[CYCLE] == 1) {
@@ -132,7 +131,7 @@ module mojo_top (
         
       state.H: //111
         led[2:0] = 7;
-        switch[2:0] = 7;
+        io_led[1][2:0] = 7;
         if(carry == 1 && sum == 1) {io_led[2][0] = 1;}
         counter.d = counter.q+1;
         if (counter.q[CYCLE] == 1) {
@@ -142,6 +141,8 @@ module mojo_top (
         
       state.END: //END
         io_led[0][7:0] = -1; //lights up last set of IO LED to signify test end
+        io_led[1][7:0] = -1;
+        io_led[2][7:0] = -1;
         counter.d = counter.q+1;
         if (counter.q[CYCLE] == 1) {
           state.d = state.IDLE;
