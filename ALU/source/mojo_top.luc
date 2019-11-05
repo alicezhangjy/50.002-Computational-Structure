@@ -1,0 +1,420 @@
+module mojo_top (
+    input clk,              // 50MHz clock
+    input rst_n,            // reset button (active low)
+    output led [8],         // 8 user controllable LEDs
+    input cclk,             // configuration clock, AVR ready when high
+    output spi_miso,        // AVR SPI MISO
+    input spi_ss,           // AVR SPI Slave Select
+    input spi_mosi,         // AVR SPI MOSI
+    input spi_sck,          // AVR SPI Clock
+    output spi_channel [4], // AVR general purpose pins (used by default to select ADC channel)
+    input avr_tx,           // AVR TX (FPGA RX)
+    output avr_rx,          // AVR RX (FPGA TX)
+    input avr_rx_busy,      // AVR RX buffer full
+    output io_led [3][8],   // LEDs on IO Shield
+    output io_seg [8],      // 7-segment LEDs on IO Shield
+    output io_sel [4],      // Digit select on IO Shield
+    input io_button [5],    // 5 buttons on IO Shield
+    input io_dip [3][8]     // DIP switches on IO Shield
+  ) {
+  
+  sig rst;                  // reset signal
+  sig a[16];                // 16bit signal | preset input a
+  sig b[16];                // 16bit signal | preset input b
+  sig op[16];               // 16bit signal | preset check for correct output
+  sig error[1];             // 1bit signal | error signal 
+  
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond;
+    fsm state = {IDLE, ADD, SUB, AND, OR, XOR, A, INVA, SHL, SHR, SRA, CMPEQ, CMPLT, CMPLE, ERR}; // define all states
+    dff sum[16]; // register for output of operations
+    dff counter[32]; // counter
+    dff manual[1]; // storage for manual state
+  }
+  
+  const CYCLE = 26; // define no. of cycles to go through base on bits
+  
+  always {
+    error = io_dip[0][0];
+    a = 16b1100001010010010 + error;
+    b = 16b0011000100010100;
+    //a = -15726;
+    //b = 12564;
+    reset_cond.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond.out;   // conditioned reset
+    
+    led = 8h00;             // turn LEDs off
+    spi_miso = bz;          // not using SPI
+    spi_channel = bzzzz;    // not using flags
+    avr_rx = bz;            // not using serial port
+    
+    io_led = 3x{{8h00}};    // turn LEDs off
+    io_seg = 8hff;          // turn segments off
+    io_sel = 4hf;           // select no digits
+    
+    
+    case(state.q){
+      state.IDLE: //IDLE
+        manual.d = 1; // set manual memory to 1 by default for manual testing
+        if (io_button[0] == 1) { //start automatic testing
+          state.d = state.ADD;
+          manual.d = 0; // change manual memory to 0 to indicate automatic testing
+        }
+        if (io_dip[2][7] == 1) {state.d = state.ADD;} // switches for manual testing
+        if (io_dip[2][6] == 1) {state.d = state.SUB;}
+        if (io_dip[2][5] == 1) {state.d = state.AND;}
+        if (io_dip[2][4] == 1) {state.d = state.OR;}
+        if (io_dip[2][3] == 1) {state.d = state.XOR;}
+        if (io_dip[2][2] == 1) {state.d = state.A;}
+        if (io_dip[2][1] == 1) {state.d = state.INVA;}
+        if (io_dip[2][0] == 1) {state.d = state.SHL;}
+        if (io_dip[1][7] == 1) {state.d = state.SHR;}
+        if (io_dip[1][6] == 1) {state.d = state.SRA;}
+        if (io_dip[1][5] == 1) {state.d = state.CMPEQ;}
+        if (io_dip[1][4] == 1) {state.d = state.CMPLT;}
+        if (io_dip[1][3] == 1) {state.d = state.CMPLE;}
+        
+      state.ADD:
+        counter.d = counter.q + 1; // counter addition
+        op = 16b1111001110100110; // op = -3162 
+        sum.d = a+b; // operator for a and b
+        io_led[0] = sum.q[7:0]; // displays the output of operation on IO LED
+        io_led[1] = sum.q[15:8];
+        if (op == sum.q){ // display if the preset matches the operation output on the first IO LED
+          io_led[2][7] = 1; 
+        }
+        
+        if (counter.q[CYCLE] == 1){ // check for the CYCLEth bit before changing state
+          if (manual.q == 1) { // check if manual is true and not move to next state if manual testing
+            state.d = state.IDLE; // it loops to idle and back to this state instantaneously
+            counter.d = 0;
+            }
+          else{
+            if (op == sum.q){ // if the test is correct move to next state
+              counter.d = 0;
+              state.d = state.SUB;
+            } else { // else display error state
+              counter.d = 0;
+              state.d = state.ERR;
+            }
+          }
+        }
+        
+      state.SUB:
+        counter.d = counter.q + 1;
+        op = 16b1001000101111110;
+        sum.d = a-b;
+        io_led[0] = sum.q[7:0];
+        io_led[1] = sum.q[15:8];
+        if (op == sum.q){
+          io_led[2][7] = 1;
+        }
+   
+        if (counter.q[CYCLE] == 1){
+          if (manual.q == 1) {
+            state.d = state.IDLE;
+            counter.d = 0;
+            }
+          else{
+            if (op == sum.q){
+              io_led[2][7] = 1;
+              state.d = state.AND;
+              counter.d = 0;
+            } else {
+              state.d = state.ERR;
+              counter.d = 0;
+            }
+          }
+        }
+      
+      state.AND:
+        counter.d = counter.q + 1;
+        op = 16b0000000000010000;
+        sum.d = a&b;
+        io_led[0] = sum.q[7:0];
+        io_led[1] = sum.q[15:8];
+        if (op == sum.q){
+          io_led[2][7] = 1;
+        }
+        if (counter.q[CYCLE] == 1){
+          if (manual.q == 1) {
+            state.d = state.IDLE;
+            counter.d = 0;
+            }
+          else{
+            if (op == sum.q){
+              io_led[2][7] = 1;
+              state.d = state.OR;
+              counter.d = 0;
+            } else {
+              state.d = state.ERR;
+              counter.d = 0;
+            }
+          }
+        }
+      state.OR:
+        counter.d = counter.q + 1;
+        op = 16b1111001110010110;
+        sum.d = a|b;
+        io_led[0] = sum.q[7:0];
+        io_led[1] = sum.q[15:8];
+        if (op == sum.q){
+          io_led[2][7] = 1;
+        }
+        if (counter.q[CYCLE] == 1){
+          if (manual.q == 1) {
+            state.d = state.IDLE;
+            counter.d = 0;
+            }
+          else{
+            if (op == sum.q){
+              io_led[2][7] = 1;
+              state.d = state.XOR;
+              counter.d = 0;
+            } else {
+              state.d = state.ERR;
+              counter.d = 0;
+            }
+          }
+        }
+      state.XOR:
+        counter.d = counter.q + 1;
+        op = 16b1111001110000110;
+        sum.d = a^b;
+        io_led[0] = sum.q[7:0];
+        io_led[1] = sum.q[15:8];
+        if (op == sum.q){
+          io_led[2][7] = 1;
+        }
+        if (counter.q[CYCLE] == 1){
+          if (manual.q == 1) {
+            state.d = state.IDLE;
+            counter.d = 0;
+            }
+          else{
+            if (op == sum.q){
+              io_led[2][7] = 1;
+              state.d = state.A;
+              counter.d = 0;
+            } else {
+              state.d = state.ERR;
+              counter.d = 0;
+            }
+          }
+        }
+      state.A:
+        counter.d = counter.q + 1;
+        op = 16b1100001010010010;
+        sum.d = a;
+        io_led[0] = sum.q[7:0];
+        io_led[1] = sum.q[15:8];
+        if (op == sum.q){
+          io_led[2][7] = 1;
+        }
+        if (counter.q[CYCLE] == 1){
+          if (manual.q == 1) {
+            state.d = state.IDLE;
+            counter.d = 0;
+            }
+          else{
+            if (op == sum.q){
+              io_led[2][7] = 1;
+              state.d = state.INVA;
+              counter.d = 0;
+            } else {
+              state.d = state.ERR;
+              counter.d = 0;
+            }
+          }
+        }
+      state.INVA:
+        counter.d = counter.q + 1;
+        op = 16b0011110101101101;
+        sum.d = ~a;
+        io_led[0] = sum.q[7:0];
+        io_led[1] = sum.q[15:8];
+        if (op == sum.q){
+          io_led[2][7] = 1;
+        }
+        if (counter.q[CYCLE] == 1){
+          if (manual.q == 1) {
+            state.d = state.IDLE;
+            counter.d = 0;
+            }
+          else{
+            if (op == sum.q){
+              io_led[2][7] = 1;
+              state.d = state.SHL;
+              counter.d = 0;
+            } else {
+              state.d = state.ERR;
+              counter.d = 0;
+            }
+          }
+        }
+        
+      state.SHL:
+        counter.d = counter.q + 1;
+        op = 16b0101001001000000;
+        sum.d = a<<5;
+        io_led[0] = sum.q[7:0];
+        io_led[1] = sum.q[15:8];
+        if (op == sum.q){
+          io_led[2][7] = 1;
+        }
+        if (counter.q[CYCLE] == 1){
+          if (manual.q == 1) {
+            state.d = state.IDLE;
+            counter.d = 0;
+            }
+          else{
+            if (op == sum.q){
+              io_led[2][7] = 1;
+              state.d = state.SHR;
+              counter.d = 0;
+            } else {
+              state.d = state.ERR;
+              counter.d = 0;
+            }
+          }
+        }
+      state.SHR:
+        counter.d = counter.q + 1;
+        op = 16b0000011000010100;
+        sum.d = a>>5;
+        io_led[0] = sum.q[7:0];
+        io_led[1] = sum.q[15:8];
+        if (op == sum.q){
+          io_led[2][7] = 1;
+        }
+        if (counter.q[CYCLE] == 1){
+          if (manual.q == 1) {
+            state.d = state.IDLE;
+            counter.d = 0;
+            }
+          else{
+            if (op == sum.q){
+              io_led[2][7] = 1;
+              state.d = state.SRA;
+              counter.d = 0;
+            } else {
+              state.d = state.ERR;
+              counter.d = 0;
+            }
+          }
+        }
+        
+      state.SRA:
+        counter.d = counter.q + 1;
+        op = 16b1111111000010100;
+        sum.d = $signed(a)>>>5;
+        io_led[0] = sum.q[7:0];
+        io_led[1] = sum.q[15:8];
+        if (op == sum.q){
+          io_led[2][7] = 1;
+        }
+        if (counter.q[CYCLE] == 1){
+          if (manual.q == 1) {
+            state.d = state.IDLE;
+            counter.d = 0;
+            }
+          else{
+            if (op == sum.q){
+              io_led[2][7] = 1;
+              state.d = state.CMPEQ;
+              counter.d = 0;
+            } else {
+              state.d = state.ERR;
+              counter.d = 0;
+            }
+          }
+        }
+        
+      state.CMPEQ:
+        counter.d = counter.q + 1;
+        op = 0;
+        sum.d = (a==b);
+        io_led[0] = sum.q[7:0];
+        io_led[1] = sum.q[15:8];
+        if (op == sum.q){
+          io_led[2][7] = 1;
+        }
+        if (counter.q[CYCLE] == 1){
+          if (manual.q == 1) {
+            state.d = state.IDLE;
+            counter.d = 0;
+            }
+          else{
+            if (op == sum.q){
+              io_led[2][7] = 1;
+              state.d = state.CMPLT;
+              counter.d = 0;
+            } else {
+              state.d = state.ERR;
+              counter.d = 0;
+            }
+          }
+        }
+        
+      state.CMPLT:
+        counter.d = counter.q + 1;
+        op = 1;
+        sum.d = ($signed(a)<$signed(b));
+        io_led[0] = sum.q[7:0];
+        io_led[1] = sum.q[15:8];
+        if (op == sum.q){
+          io_led[2][7] = 1;
+        }
+        if (counter.q[CYCLE] == 1){
+          if (manual.q == 1) {
+            state.d = state.IDLE;
+            counter.d = 0;
+            }
+          else{
+            if (op == sum.q){
+              io_led[2][7] = 1;
+              state.d = state.CMPLE;
+              counter.d = 0;
+            } else {
+              state.d = state.ERR;
+              counter.d = 0;
+            }
+          }
+        }
+      state.CMPLE:
+        counter.d = counter.q + 1;
+        op = 1;
+        sum.d = ($signed(a)<=$signed(b));
+        io_led[0] = sum.q[7:0];
+        io_led[1] = sum.q[15:8];
+        if (op == sum.q){
+          io_led[2][7] = 1;
+        }
+        if (counter.q[CYCLE] == 1){
+          if (manual.q == 1) {
+            state.d = state.IDLE;
+            counter.d = 0;
+            }
+          else{
+            if (op == sum.q){
+              io_led[2][7] = 1;
+              state.d = state.IDLE;
+              counter.d = 0;
+            } else {
+              state.d = state.ERR;
+              counter.d = 0;
+            }
+          }
+        }
+      state.ERR:
+        counter.d = counter.q + 1;
+        io_led[2] = -1; // lights up LED to display error
+        if (counter.q[CYCLE] == 1) {
+          state.d = state.IDLE; // moves back to IDLE and end the test
+          counter.d = 0;
+        }
+    } 
+  }
+}
