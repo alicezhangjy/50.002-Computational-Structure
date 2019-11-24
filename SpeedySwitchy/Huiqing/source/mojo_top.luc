@@ -1,0 +1,83 @@
+module mojo_top (
+    input clk,              // 50MHz clock
+    input rst_n,            // reset button (active low)
+    output led [8],         // 8 user controllable LEDs
+    input cclk,             // configuration clock, AVR ready when high
+    output spi_miso,        // AVR SPI MISO
+    input spi_ss,           // AVR SPI Slave Select
+    input spi_mosi,         // AVR SPI MOSI
+    input spi_sck,          // AVR SPI Clock
+    output spi_channel [4], // AVR general purpose pins (used by default to select ADC channel)
+    input avr_tx,           // AVR TX (FPGA RX)
+    output avr_rx,          // AVR RX (FPGA TX)
+    input avr_rx_busy,      // AVR RX buffer full
+    //output io_led [3][8],   // LEDs on IO Shield
+    output io_seg [8],      // 7-segment LEDs on IO Shield
+    output io_sel [6],      // Digit select on IO Shield
+    input io_button [5],    // 5 buttons on IO Shield
+    input io_dip [3][8],     // DIP switches on IO Shield
+    input next
+  ) {
+  
+  sig rst;                  // reset signal
+  sig result [8];          // result of our operations
+  sig ones [16];
+  sig tens [16];
+  
+  .clk(clk) {
+  // The reset conditioner is used to synchronize the reset signal to the FPGA
+  // clock. This ensures the entire FPGA comes out of reset at the same time.
+  reset_conditioner reset_cond;
+     
+  .rst(rst) {
+    dff seed [32];
+    counter ctr (#SIZE(16), #TOP(99), #DIV(26), #UP(0));    // COUNTER: connect counter to reset signal and clk
+    multi_seven_seg player_1_seg;                           // SEVEN SEGMENT: connect seven_segs to reset signal and clk
+    multi_seven_seg player_2_seg;
+      
+    fsm state = {
+      DOWN, 
+      UP
+    };
+  }
+  pn_gen pn_gen;     //RANDOM: pseudo-rand number generator
+}
+  
+  always {
+    reset_cond.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond.out;   // conditioned reset_cond
+    pn_gen.seed = seed.q;              // use seed.q as the seed
+    pn_gen.next = 0;                   // don't generate new numbers
+    pn_gen.rst = rst;                  // connect rst by default
+       
+    led = 8h00;             // turn LEDs off
+    spi_miso = bz;          // not using SPI
+    spi_channel = bzzzz;    // not using flags
+    avr_rx = bz;            // not using serial port
+    
+    tens = ctr.value/d10;
+    ones = ctr.value - tens*d10;
+    player_1_seg.values = {ctr.value[11:8], tens[3:0], ones[3:0]};    //SEVEN SEGMENT - INPUT: 4-bit numbers
+    player_2_seg.values = {ctr.value[11:8], tens[3:0], ones[3:0]};    //SEVEN SEGMENT - INPUT: 4-bit numbers
+     
+    io_seg = ~player_1_seg.seg;           // SEVEN SEGMENT: connect segments to counter
+    io_seg = ~player_2_seg.seg;           // SEVEN SEGMENT: connect segments to counter
+    io_sel[2:0] = ~player_1_seg.sel;      // SEVEN SEGMENT: connect digit select to the driver
+    io_sel[5:3] = ~player_2_seg.sel;      // SEVEN SEGMENT: connect digit select to the driver
+    
+    result = pn_gen.num[7:0]; // RANDOM: get random number
+    led[7:0] = result;
+    
+    case(state.q){
+      state.DOWN:
+        if (io_button[0] == 1) {     // if button is pressed
+          state.d = state.UP;
+        }
+      state.UP:
+        pn_gen.next = 1;             // RANDOM: generate another random number
+        state.d = state.DOWN;
+        result = pn_gen.num[7:0];    // RANDOM: get random number
+        led[7:0] = result;
+    }
+  }
+}  

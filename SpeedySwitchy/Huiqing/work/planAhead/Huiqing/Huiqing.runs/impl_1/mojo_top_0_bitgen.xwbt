@@ -1,0 +1,8 @@
+INTSTYLE=pa
+INFILE=C:\Users\linhu\OneDrive - Singapore University of Technology and Design\SUTD\Term 4\Comp Struct\1D\50.002-Computational-Structure\SpeedySwitchy\Huiqing\work\planAhead\Huiqing\Huiqing.runs\impl_1\mojo_top_0_routed.ncd
+OUTFILE=C:\Users\linhu\OneDrive - Singapore University of Technology and Design\SUTD\Term 4\Comp Struct\1D\50.002-Computational-Structure\SpeedySwitchy\Huiqing\work\planAhead\Huiqing\Huiqing.runs\impl_1\mojo_top_0.bit
+FAMILY=Spartan6
+PART=xc6slx9-2tqg144
+WORKINGDIR=C:\Users\linhu\OneDrive - Singapore University of Technology and Design\SUTD\Term 4\Comp Struct\1D\50.002-Computational-Structure\SpeedySwitchy\Huiqing\work\planAhead\Huiqing\Huiqing.runs\impl_1
+LICENSE=WebPack
+USER_INFO=211846777_0_0_373
