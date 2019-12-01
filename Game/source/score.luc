@@ -1,0 +1,85 @@
+module score (
+    input clk,               // clock
+    input rst,               // reset
+    input p1,                // output player1 for score
+    input p2,                // output player2 for score
+    output scr1[10],          // score of player 1  
+    output scr2[10]          // score of player 2
+    
+  ) {
+  alu alu; //import ALU modules
+    
+  .clk(clk){
+    .rst(rst){  
+      fsm state = {ADD,MUL}; // 2 different modes of game play
+      dff score1[10]; //register that stores the score of player 1  
+      dff score2[10]; //register that stores the score of player 2  
+    }
+  }
+  
+   
+  always {
+    /*Initialise ALU module*/
+    alu.alufn = bzzzz;
+    alu.a = 0;
+    alu.b = 0;
+    
+    scr1 = score1.q; // set outputs as data in register
+    scr2 = score2.q;   
+    
+    case(state.q){
+      state.ADD: // game mode is Addition
+        if (p1 == 1 ){  // correct input
+          alu.alufn = 000000;
+          alu.a = score1.q;
+          alu.b = 1;
+          score1.d = alu.z;
+        }
+        if (p2 == 1 ){  // correct input
+          alu.alufn = 000000;
+          alu.a = score1.q;
+          alu.b = 1;
+          score1.d = alu.z;
+        }
+        if (p1 == 2 ){  // wrong input
+          alu.alufn = 000001;
+          alu.a = score1.q;
+          alu.b = 1;
+          score1.d = alu.z;
+        }
+        if (p2 == 2 ){  // wrong input
+          alu.alufn = 000001;
+          alu.a = score1.q;
+          alu.b = 1;
+          score1.d = alu.z;
+        }
+               
+      state.MUL: // game mode is Multiplication
+        if ( p1 == 1 ){  // correct input
+          alu.alufn = 100000;
+          alu.a = score1.q;
+          alu.b = 2;
+          score1.d = alu.z;
+        }
+        if ( p2 == 1 ){  // correct input
+          alu.alufn = 100000;
+          alu.a = score1.q;
+          alu.b = 2;
+          score1.d = alu.z;
+        }
+        if ( p1 == 2 ){  // wrong input
+          alu.alufn = 100001;
+          alu.a = score1.q;
+          alu.b = 2;
+          score1.d = alu.z;
+        }
+        if ( p2 == 2 ){  // wrong input
+          alu.alufn = 100001;
+          alu.a = score1.q;
+          alu.b = 2;
+          score1.d = alu.z; 
+        }
+    }
+  }
+}
+  

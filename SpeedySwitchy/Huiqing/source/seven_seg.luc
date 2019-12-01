@@ -5,6 +5,30 @@ module seven_seg (
  
   always {
     case (char) {
+    /*
+      0: segs = ~7b0000001;
+      1: segs = ~7b0000010;
+      2: segs = ~7b0000100;
+      3: segs = ~7b0001000;
+      4: segs = ~7b0010000;
+      5: segs = ~7b0100000;
+      6: segs = ~7b1000000;
+      7: segs = ~7b1111111;
+      8: segs = ~7b1111110;
+      9: segs = ~7b1111101;
+    
+      0: segs = ~7b1111110;
+      1: segs = ~7b0110000;
+      2: segs = ~7b1101101;
+      3: segs = ~7b1111001;
+      4: segs = ~7b0110011;
+      5: segs = ~7b1011011;
+      6: segs = ~7b1011111;
+      7: segs = ~7b1110000;
+      8: segs = ~7b1111111;
+      9: segs = ~7b1111011;
+      */
+        
       0: segs = ~7b0111111;
       1: segs = ~7b0000110;
       2: segs = ~7b1011011;
@@ -15,6 +39,7 @@ module seven_seg (
       7: segs = ~7b0000111;
       8: segs = ~7b1111111;
       9: segs = ~7b1101111;
+       
       default: segs = 7b0000000;
     }
   }

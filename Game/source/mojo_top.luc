@@ -1,0 +1,226 @@
+module mojo_top (
+    input clk,              // 50MHz clock
+    input rst_n,            // reset button (active low)
+    output led [8],         // 8 user controllable LEDs
+    output spi_miso,        // AVR SPI MISO
+    output spi_channel [4], // AVR general purpose pins (used by default to select ADC channel)
+    output avr_rx,          // AVR RX (FPGA TX)
+    output io_seg [8],      // 7-segment LEDs on IO Shield
+    output io_sel [8],      // Digit select on IO Shield
+    //output button_led[4],
+    output bb1_led,
+    output bb2_led,
+    output by1_led,
+    output by2_led,
+    input bb1,              // blue button for player1
+    input bb2,              // blue button for player2
+    input by1,              // yellow button for player1
+    input by2              // yellow button for player2
+    //input start
+  ) {
+  
+  sig rst;                  // reset signal
+  sig time_ones [16];
+  sig time_tens [16];
+  sig start;
+  
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond;
+    .rst(rst){
+      score score;
+      pn_gen pn_gen;
+      counter ctr (#SIZE(16), #TOP(99), #DIV(22), #UP(0));    // COUNTER: connect counter to reset signal and clk      
+      multi_seven_seg all_segs;                           // SEVEN SEGMENT: connect seven_segs to reset signal and clk
+      //multi_seven_seg player_2_seg;
+      //multi_seven_seg timer_seg;
+            
+      fsm state = {IDLE, RAND, B, Y, END}; // define all states
+      dff buttonb1[1]; // store button press until used
+      dff buttonb1r[1]; // store if button is ready
+      dff buttonb2[1];
+      dff buttonb2r[1];
+      dff buttony1[1];
+      dff buttony1r[1];
+      dff buttony2[1];
+      dff buttony2r[1];
+      dff p1_hundreds[10];
+      dff p1_tens[10];
+      dff p1_ones[10];
+      dff p2_hundreds[10];
+      dff p2_tens[10];
+      dff p2_ones[10];
+    }
+    edge_detector bb1_e;
+    edge_detector bb2_e;
+    edge_detector by1_e;
+    edge_detector by2_e;
+    /*
+    .start(start) {
+          counter ctr;
+    }*/
+  }
+    
+  always {
+    bb1_e.in = bb1;
+    bb2_e.in = bb2;
+    by1_e.in = by1;
+    by2_e.in = by2;
+    
+    reset_cond.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond.out;   // conditioned reset
+    
+    led = 8h00;             // turn LEDs off
+    spi_miso = bz;          // not using SPI
+    spi_channel = bzzzz;    // not using flags
+    avr_rx = bz;            // not using serial port
+    
+    /*FOR RAND GEN*/
+    pn_gen.seed = 39;
+    pn_gen.next = 0;
+    
+    /*FOR SEVEN SEG*/
+    time_tens = ctr.value/d10;
+    time_ones = ctr.value - time_tens*d10;
+    p1_hundreds.d = score.scr1/d100;
+    p1_tens.d = (score.scr1-(p1_hundreds.q*d100))/d10;
+    p1_ones.d = score.scr1 - p1_tens.q*d10;
+    p2_hundreds.d = score.scr2/d100;
+    p2_tens.d = (score.scr2-(p2_hundreds.q*d100))/d10;
+    //p2_tens.d = score.scr2/d10;
+    p2_ones.d = score.scr2 - p2_tens.q*d10;
+    //timer_seg.values = {ctr.value[11:8], time_tens[3:0], time_ones[3:0]};    //SEVEN SEGMENT - INPUT: 4-bit numbers
+    all_segs.values = {time_tens[3:0], time_ones[3:0], p2_hundreds.q[3:0], p2_tens.q[3:0], p2_ones.q[3:0], p1_hundreds.q[3:0], p1_tens.q[3:0], p1_ones.q[3:0]};    //SEVEN SEGMENT - INPUT: 4-bit numbers
+    //player_2_seg.values = {ctr.value[11:8], p2_tens.q[3:0], p2_ones.q[3:0]};    //SEVEN SEGMENT - INPUT: 4-bit numbers
+    
+     
+    io_seg = ~all_segs.seg;           // SEVEN SEGMENT: connect segments to counter
+    //io_seg = ~player_2_seg.seg;           // SEVEN SEGMENT: connect segments to counter
+    //io_seg = ~timer_seg.seg;
+    
+    io_sel[7:0] = ~all_segs.sel;      // SEVEN SEGMENT: connect digit select to the driver
+    //io_sel[5:3] = ~player_2_seg.sel;      // SEVEN SEGMENT: connect digit select to the driver
+    //io_sel[7:6] = ~timer_seg.sel;
+    
+    /*FOR SCORE*/
+    score.p1 = 0;
+    score.p2 = 0;
+    
+    bb1_led = buttonb1.q;
+    bb2_led = buttonb2.q;
+    by1_led = buttony1.q;
+    by2_led = buttony2.q; 
+    
+    /*BUTTON CONDITONER*/
+    /*FOR BUTTON BLUE 1*/
+    if (bb1_e.out == 1 && buttonb1r.q == 1){
+      buttonb1.d = 1;
+      buttonb1r.d = 0;
+    }
+    if (bb1_e.out == 0 && buttonb1r.q == 0 && buttonb1.q == 0){
+      buttonb1r.d = 1;
+    }
+    /*FOR BUTTON BLUE 2*/    
+    if (bb2_e.out == 1 && buttonb2r.q == 1){
+      buttonb2.d = 1;
+      buttonb2r.d = 0;
+    }
+    if (bb2_e.out == 0 && buttonb2r.q == 0 && buttonb2.q == 0){
+      buttonb2r.d = 1;
+    }
+    /*FOR BUTTON YELLOW 1*/
+    if (by1_e.out == 1 && buttony1r.q == 1){
+      buttony1.d = 1;
+      buttony1r.d = 0;
+    }
+    if (by1_e.out == 0 && buttony1r.q == 0 && buttony1.q == 0){
+      buttony1r.d = 1;
+    }
+    /*FOR BUTTON YELLOW 2*/
+    if (by2_e.out == 1 && buttony2r.q == 1){
+      buttony2.d = 1;
+      buttony2r.d = 0;
+    }
+    if (by2_e.out == 0 && buttony2r.q == 0 && buttony2.q == 0){
+      buttony2r.d = 1;
+    }
+      
+    /*FINITE STATE MACHINE*/
+    case(state.q){
+      state.IDLE: //default state
+        led[0] = 1;
+        if (buttonb1.q == 1 && buttonb2.q == 1 && buttony1.q == 1 && buttony2.q == 1){ // state game when all buttons are pressed
+          state.d = state.RAND;
+          buttonb1.d = 0; // reset all button presses
+          buttonb2.d = 0;
+          buttony1.d = 0;
+          buttony2.d = 0;
+        } 
+      state.RAND: //rand state
+        led[1] = 1; 
+        start = 1;
+        pn_gen.next = 1; // generate new number
+        if (pn_gen.num[14] == 0){state.d = state.B;} // check random number to determine start state
+        else{state.d = state.Y;}
+      state.B: //blue state button checker
+        led[2] = 1;
+        if (score.scr1 == 99){state.d = state.END;} //end game if a player reaches max score
+        if (score.scr2 == 99){state.d = state.END;}
+        if (ctr.value == 0){state.d = state.END;} //end game if time is up
+        else {
+          if (buttonb1.q == 1){
+            score.p1 = 2; //tells score module to modify player1 score
+            buttonb1.d = 0;
+            state.d = state.Y;
+          }
+          if (buttonb2.q == 1){
+            score.p2 = 2; //tells score module to modify player2 score
+            buttonb2.d = 0;
+            state.d = state.Y;
+          }
+          if (buttony1.q == 1){
+            score.p1 = 1; //tells score module to modify player1 score
+            buttony1.d = 0;
+            state.d = state.Y;
+          }
+          if (buttony2.q == 1){
+            score.p2 = 1; //tells score module to modify player2 score
+            buttony2.d = 0;
+            state.d = state.Y;
+          }
+        }        
+      state.Y:
+        led[3] = 1;
+        if (score.scr1 == 99){state.d = state.END;}
+        if (score.scr2 == 99){state.d = state.END;}
+        if (ctr.value == 0){state.d = state.END;}
+        else {
+          if (buttonb1.q == 1){
+            score.p1 = 2; //tells score module to modify player1 score
+            buttonb1.d = 0;
+            state.d = state.B;
+          }
+          if (buttonb2.q == 1){
+            score.p2 = 2; //tells score module to modify player2 score
+            buttonb2.d = 0;
+            state.d = state.B;
+          }
+          if (buttony1.q == 1){
+            score.p1 = 1; //tells score module to modify player1 score
+            buttony1.d = 0;
+            state.d = state.B;
+          }
+          if (buttony2.q == 1){
+            score.p2 = 1; //tells score module to modify player2 score
+            buttony2.d = 0;
+            state.d = state.B;
+          }
+        }  
+      state.END: // end state
+        if (score.scr1 > score.scr2){led[0] = 1;} //display winner
+        else {led[1] = 1;}
+        state.d = state.IDLE;
+    }
+  }
+}

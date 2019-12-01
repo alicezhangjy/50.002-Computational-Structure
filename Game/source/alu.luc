@@ -1,0 +1,64 @@
+module alu (             // This module is for 16bit ALU 
+    input alufn[6],      // 6bit ALUFN input signal
+    input a[16],         // 16bit input a
+    input b[16],         // 16bit input b
+    output alu[16],      // 16bit output ALU
+    output z[1],         // 1bit output z
+    output v[1],         // 1bit output v
+    output n[1]          // 1bit output n
+  ) {
+
+  // import module
+  adder adder;
+  compare compare;
+  boolean boolean;
+  shifter shifter;  
+  
+  always {
+    // assign inputs and outputs for adder module
+    adder.alufn = alufn[5:0];
+    adder.a = a[15:0];
+    adder.b = b[15:0];
+    
+    // assign inputs and outputs for compare module
+    compare.alufn = alufn[5:0];
+    compare.z = adder.z;
+    compare.v = adder.v;
+    compare.n = adder.n;
+    
+    // assign inputs and outputs for boolean module
+    boolean.alufn = alufn[5:0];
+    boolean.a = a[15:0];
+    boolean.b = b[15:0];
+    
+    // assign inputs and outputs for shifter module
+    shifter.alufn = alufn[5:0];
+    shifter.a = a;
+    shifter.b = b;
+    
+    case(alufn[5:4]){
+      2b00:                       // 00xxxx adder module
+        alu = adder.op; 
+      2b01:                       // 01xxxx boolean module
+        alu = boolean.boole;
+      2b10:                       // 10xxxx shifter module
+        alu = shifter.shift;
+      2b11:                       // 11xxxx compare module
+        alu = compare.op;
+      default:
+        alu = 0;                 // (nothing)
+    }
+    
+    case(alufn[5:0]){
+      6b000010:
+        alu = a*b;
+      6b000011:
+        alu = a/b;
+    }
+    
+    z = adder.z;                 // output z
+    v = adder.v;                 // output v 
+    n = adder.n;                 // output n
+
+  }
+}

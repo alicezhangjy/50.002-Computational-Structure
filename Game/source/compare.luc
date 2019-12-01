@@ -1,0 +1,25 @@
+module compare (         // This module is for shifting
+    input alufn[6],      // 6bit ALUFN input signal
+    input z[1],          // 1bit input z
+    input v[1],          // 1bit input v
+    input n[1],          // 1bit input n
+    output op[16]        // 16bit output op
+  ) {
+  
+  // JSIM code: .subckt compare32 ALUFN[2:1] z v n cmp[15:0]
+
+  
+  sig cmp[1];            // compare signal
+  
+  always {
+    case(alufn[2:1]){                 // ALUFN 1100xx
+      2b01: cmp = z;                  // A = B     LSB = Z                alufn[2:1] = 0
+      2b10: cmp = n^v;                // A < B     LSB = N xor V          alufn[2:1] = 10              
+      2b11: cmp = z|(n^v);            // A <= B    LSB = Z or (N xor V)   alufn[2:1] = 11        
+      default: cmp = 1b0;             // default (nothing)
+    }
+    
+    op[15:1] = 15b0;        // first 15bit connect to 0
+    op[0] = cmp;            // outputs the last 1 bit
+  }
+}

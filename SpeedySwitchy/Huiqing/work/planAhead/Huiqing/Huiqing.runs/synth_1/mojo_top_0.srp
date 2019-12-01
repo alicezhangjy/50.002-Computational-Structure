@@ -61,8 +61,6 @@ Analyzing Verilog file "C:/Users/linhu/OneDrive - Singapore University of Techno
 Parsing module <counter_6>.
 Analyzing Verilog file "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/SpeedySwitchy/Huiqing/work/planAhead/Huiqing/Huiqing.srcs/sources_1/imports/verilog/reset_conditioner_1.v" into library work
 Parsing module <reset_conditioner_1>.
-Analyzing Verilog file "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/SpeedySwitchy/Huiqing/work/planAhead/Huiqing/Huiqing.srcs/sources_1/imports/verilog/pn_gen_5.v" into library work
-Parsing module <pn_gen_5>.
 Analyzing Verilog file "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/SpeedySwitchy/Huiqing/work/planAhead/Huiqing/Huiqing.srcs/sources_1/imports/verilog/multi_seven_seg_3.v" into library work
 Parsing module <multi_seven_seg_3>.
 Analyzing Verilog file "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/SpeedySwitchy/Huiqing/work/planAhead/Huiqing/Huiqing.srcs/sources_1/imports/verilog/counter_2.v" into library work
@@ -88,9 +86,8 @@ Elaborating module <seven_seg_7>.
 
 Elaborating module <decoder_8>.
 WARNING:HDLCompiler:413 - "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/SpeedySwitchy/Huiqing/work/planAhead/Huiqing/Huiqing.srcs/sources_1/imports/verilog/multi_seven_seg_3.v" Line 51: Result of 4-bit expression is truncated to fit in 3-bit target.
-
-Elaborating module <pn_gen_5>.
-WARNING:HDLCompiler:634 - "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/SpeedySwitchy/Huiqing/work/planAhead/Huiqing/Huiqing.srcs/sources_1/imports/verilog/mojo_top_0.v" Line 44: Net <M_seed_d[31]> does not have a driver.
+WARNING:HDLCompiler:413 - "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/SpeedySwitchy/Huiqing/work/planAhead/Huiqing/Huiqing.srcs/sources_1/imports/verilog/mojo_top_0.v" Line 96: Result of 3-bit expression is truncated to fit in 2-bit target.
+WARNING:HDLCompiler:1127 - "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/SpeedySwitchy/Huiqing/work/planAhead/Huiqing/Huiqing.srcs/sources_1/imports/verilog/mojo_top_0.v" Line 101: Assignment to M_seed_q ignored, since the identifier is never used
 
 =========================================================================
 *                           HDL Synthesis                               *
@@ -98,31 +95,25 @@ WARNING:HDLCompiler:634 - "C:/Users/linhu/OneDrive - Singapore University of Tec
 
 Synthesizing Unit <mojo_top_0>.
     Related source file is "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/SpeedySwitchy/Huiqing/work/planAhead/Huiqing/Huiqing.srcs/sources_1/imports/verilog/mojo_top_0.v".
-WARNING:Xst:647 - Input <io_button<4:1>> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
-WARNING:Xst:647 - Input <io_dip> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
 WARNING:Xst:647 - Input <cclk> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
 WARNING:Xst:647 - Input <spi_ss> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
 WARNING:Xst:647 - Input <spi_mosi> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
 WARNING:Xst:647 - Input <spi_sck> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
 WARNING:Xst:647 - Input <avr_tx> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
 WARNING:Xst:647 - Input <avr_rx_busy> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
-WARNING:Xst:647 - Input <next> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
-INFO:Xst:3210 - "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/SpeedySwitchy/Huiqing/work/planAhead/Huiqing/Huiqing.srcs/sources_1/imports/verilog/mojo_top_0.v" line 54: Output port <seg> of the instance <player_1_seg> is unconnected or connected to loadless signal.
-WARNING:Xst:653 - Signal <M_seed_d> is used but never assigned. This sourceless signal will be automatically connected to value GND.
-    Found 1-bit register for signal <M_state_q>.
-    Found 4-bit subtractor for signal <ones<3:0>> created at line 33.
-    Found 16x4-bit multiplier for signal <n0042> created at line 100.
-    Found 1-bit tristate buffer for signal <spi_miso> created at line 87
-    Found 1-bit tristate buffer for signal <spi_channel<3>> created at line 87
-    Found 1-bit tristate buffer for signal <spi_channel<2>> created at line 87
-    Found 1-bit tristate buffer for signal <spi_channel<1>> created at line 87
-    Found 1-bit tristate buffer for signal <spi_channel<0>> created at line 87
-    Found 1-bit tristate buffer for signal <avr_rx> created at line 87
-    WARNING:Xst:2404 -  FFs/Latches <M_seed_q<31:0>> (without init value) have a constant value of 0 in block <mojo_top_0>.
+INFO:Xst:3210 - "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/SpeedySwitchy/Huiqing/work/planAhead/Huiqing/Huiqing.srcs/sources_1/imports/verilog/mojo_top_0.v" line 51: Output port <seg> of the instance <player_1_seg> is unconnected or connected to loadless signal.
+INFO:Xst:3210 - "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/SpeedySwitchy/Huiqing/work/planAhead/Huiqing/Huiqing.srcs/sources_1/imports/verilog/mojo_top_0.v" line 61: Output port <seg> of the instance <player_2_seg> is unconnected or connected to loadless signal.
+    Found 4-bit subtractor for signal <ones<3:0>> created at line 30.
+    Found 16x4-bit multiplier for signal <n0033> created at line 87.
+    Found 1-bit tristate buffer for signal <spi_miso> created at line 79
+    Found 1-bit tristate buffer for signal <spi_channel<3>> created at line 79
+    Found 1-bit tristate buffer for signal <spi_channel<2>> created at line 79
+    Found 1-bit tristate buffer for signal <spi_channel<1>> created at line 79
+    Found 1-bit tristate buffer for signal <spi_channel<0>> created at line 79
+    Found 1-bit tristate buffer for signal <avr_rx> created at line 79
     Summary:
 	inferred   1 Multiplier(s).
 	inferred   1 Adder/Subtractor(s).
-	inferred   1 D-type flip-flop(s).
 	inferred   6 Tristate(s).
 Unit <mojo_top_0> synthesized.
 
@@ -173,35 +164,24 @@ Synthesizing Unit <decoder_8>.
 	no macro.
 Unit <decoder_8> synthesized.
 
-Synthesizing Unit <pn_gen_5>.
-    Related source file is "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/SpeedySwitchy/Huiqing/work/planAhead/Huiqing/Huiqing.srcs/sources_1/imports/verilog/pn_gen_5.v".
-    Found 32-bit register for signal <M_y_q>.
-    Found 32-bit register for signal <M_z_q>.
-    Found 32-bit register for signal <M_w_q>.
-    Found 32-bit register for signal <M_x_q>.
-    Summary:
-	inferred 128 D-type flip-flop(s).
-	inferred   1 Multiplexer(s).
-Unit <pn_gen_5> synthesized.
-
 Synthesizing Unit <div_16u_4u>.
     Related source file is "".
-    Found 20-bit adder for signal <GND_9_o_b[3]_add_1_OUT> created at line 0.
-    Found 19-bit adder for signal <GND_9_o_b[3]_add_3_OUT> created at line 0.
-    Found 18-bit adder for signal <GND_9_o_b[3]_add_5_OUT> created at line 0.
-    Found 17-bit adder for signal <GND_9_o_b[3]_add_7_OUT> created at line 0.
+    Found 20-bit adder for signal <GND_8_o_b[3]_add_1_OUT> created at line 0.
+    Found 19-bit adder for signal <GND_8_o_b[3]_add_3_OUT> created at line 0.
+    Found 18-bit adder for signal <GND_8_o_b[3]_add_5_OUT> created at line 0.
+    Found 17-bit adder for signal <GND_8_o_b[3]_add_7_OUT> created at line 0.
     Found 16-bit adder for signal <a[15]_b[3]_add_9_OUT> created at line 0.
-    Found 16-bit adder for signal <a[15]_GND_9_o_add_11_OUT> created at line 0.
-    Found 16-bit adder for signal <a[15]_GND_9_o_add_13_OUT> created at line 0.
-    Found 16-bit adder for signal <a[15]_GND_9_o_add_15_OUT> created at line 0.
-    Found 16-bit adder for signal <a[15]_GND_9_o_add_17_OUT> created at line 0.
-    Found 16-bit adder for signal <a[15]_GND_9_o_add_19_OUT> created at line 0.
-    Found 16-bit adder for signal <a[15]_GND_9_o_add_21_OUT> created at line 0.
-    Found 16-bit adder for signal <a[15]_GND_9_o_add_23_OUT> created at line 0.
-    Found 16-bit adder for signal <a[15]_GND_9_o_add_25_OUT> created at line 0.
-    Found 16-bit adder for signal <a[15]_GND_9_o_add_27_OUT[15:0]> created at line 0.
-    Found 16-bit adder for signal <a[15]_GND_9_o_add_29_OUT[15:0]> created at line 0.
-    Found 16-bit adder for signal <a[15]_GND_9_o_add_31_OUT[15:0]> created at line 0.
+    Found 16-bit adder for signal <a[15]_GND_8_o_add_11_OUT> created at line 0.
+    Found 16-bit adder for signal <a[15]_GND_8_o_add_13_OUT> created at line 0.
+    Found 16-bit adder for signal <a[15]_GND_8_o_add_15_OUT> created at line 0.
+    Found 16-bit adder for signal <a[15]_GND_8_o_add_17_OUT> created at line 0.
+    Found 16-bit adder for signal <a[15]_GND_8_o_add_19_OUT> created at line 0.
+    Found 16-bit adder for signal <a[15]_GND_8_o_add_21_OUT> created at line 0.
+    Found 16-bit adder for signal <a[15]_GND_8_o_add_23_OUT> created at line 0.
+    Found 16-bit adder for signal <a[15]_GND_8_o_add_25_OUT> created at line 0.
+    Found 16-bit adder for signal <a[15]_GND_8_o_add_27_OUT[15:0]> created at line 0.
+    Found 16-bit adder for signal <a[15]_GND_8_o_add_29_OUT[15:0]> created at line 0.
+    Found 16-bit adder for signal <a[15]_GND_8_o_add_31_OUT[15:0]> created at line 0.
     Found 20-bit comparator lessequal for signal <BUS_0001> created at line 0
     Found 19-bit comparator lessequal for signal <BUS_0002> created at line 0
     Found 18-bit comparator lessequal for signal <BUS_0003> created at line 0
@@ -229,23 +209,21 @@ Unit <div_16u_4u> synthesized.
 HDL Synthesis Report
 
 Macro Statistics
-# RAMs                                                 : 2
- 16x7-bit single-port Read Only RAM                    : 2
+# RAMs                                                 : 3
+ 16x7-bit single-port Read Only RAM                    : 3
 # Multipliers                                          : 1
  16x4-bit multiplier                                   : 1
-# Adders/Subtractors                                   : 22
+# Adders/Subtractors                                   : 24
  16-bit adder                                          : 12
  17-bit adder                                          : 1
- 18-bit adder                                          : 3
+ 18-bit adder                                          : 4
  19-bit adder                                          : 1
  20-bit adder                                          : 1
- 4-bit adder                                           : 2
+ 4-bit adder                                           : 3
  4-bit subtractor                                      : 1
  42-bit subtractor                                     : 1
-# Registers                                            : 9
- 1-bit register                                        : 1
- 18-bit register                                       : 2
- 32-bit register                                       : 4
+# Registers                                            : 5
+ 18-bit register                                       : 3
  4-bit register                                        : 1
  42-bit register                                       : 1
 # Comparators                                          : 17
@@ -254,17 +232,13 @@ Macro Statistics
  18-bit comparator lessequal                           : 1
  19-bit comparator lessequal                           : 1
  20-bit comparator lessequal                           : 1
-# Multiplexers                                         : 212
+# Multiplexers                                         : 211
  1-bit 2-to-1 multiplexer                              : 208
  16-bit 2-to-1 multiplexer                             : 3
- 32-bit 2-to-1 multiplexer                             : 1
-# Logic shifters                                       : 2
- 23-bit shifter logical right                          : 2
+# Logic shifters                                       : 3
+ 23-bit shifter logical right                          : 3
 # Tristates                                            : 6
  1-bit tristate buffer                                 : 6
-# Xors                                                 : 3
- 32-bit xor2                                           : 2
- 32-bit xor4                                           : 1
 
 =========================================================================
 
@@ -282,7 +256,7 @@ The following registers are absorbed into counter <M_ctr_q>: 1 register on signa
 Unit <counter_6> synthesized (advanced).
 
 Synthesizing (advanced) Unit <mojo_top_0>.
-	Multiplier <Mmult_n0042> in block <mojo_top_0> and adder/subtractor <Msub_ones<3:0>> in block <mojo_top_0> are combined into a MAC<Maddsub_n0042>.
+	Multiplier <Mmult_n0033> in block <mojo_top_0> and adder/subtractor <Msub_ones<3:0>> in block <mojo_top_0> are combined into a MAC<Maddsub_n0033>.
 Unit <mojo_top_0> synthesized (advanced).
 
 Synthesizing (advanced) Unit <seven_seg_7>.
@@ -303,90 +277,87 @@ Unit <seven_seg_7> synthesized (advanced).
 Advanced HDL Synthesis Report
 
 Macro Statistics
-# RAMs                                                 : 2
- 16x7-bit single-port distributed Read Only RAM        : 2
+# RAMs                                                 : 3
+ 16x7-bit single-port distributed Read Only RAM        : 3
 # MACs                                                 : 1
  16x4-to-4-bit MAC                                     : 1
-# Adders/Subtractors                                   : 18
+# Adders/Subtractors                                   : 19
  16-bit adder                                          : 16
- 4-bit adder                                           : 2
-# Counters                                             : 3
- 18-bit up counter                                     : 2
+ 4-bit adder                                           : 3
+# Counters                                             : 4
+ 18-bit up counter                                     : 3
  42-bit down counter                                   : 1
-# Registers                                            : 133
- Flip-Flops                                            : 133
+# Registers                                            : 4
+ Flip-Flops                                            : 4
 # Comparators                                          : 17
  16-bit comparator lessequal                           : 13
  17-bit comparator lessequal                           : 1
  18-bit comparator lessequal                           : 1
  19-bit comparator lessequal                           : 1
  20-bit comparator lessequal                           : 1
-# Multiplexers                                         : 212
+# Multiplexers                                         : 211
  1-bit 2-to-1 multiplexer                              : 208
  16-bit 2-to-1 multiplexer                             : 3
- 32-bit 2-to-1 multiplexer                             : 1
-# Logic shifters                                       : 2
- 23-bit shifter logical right                          : 2
-# Xors                                                 : 3
- 32-bit xor2                                           : 2
- 32-bit xor4                                           : 1
+# Logic shifters                                       : 3
+ 23-bit shifter logical right                          : 3
 
 =========================================================================
 
 =========================================================================
 *                         Low Level Synthesis                           *
 =========================================================================
+WARNING:Xst:1989 - Unit <mojo_top_0>: instances <player_1_seg>, <player_2_seg> of unit <multi_seven_seg_3> are equivalent, second instance is removed
 
 Optimizing unit <mojo_top_0> ...
 
-Optimizing unit <pn_gen_5> ...
-
 Optimizing unit <div_16u_4u> ...
-WARNING:Xst:1293 - FF/Latch <ctr/M_ctr_q_35> has a constant value of 0 in block <mojo_top_0>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <ctr/M_ctr_q_33> has a constant value of 0 in block <mojo_top_0>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <ctr/M_ctr_q_34> has a constant value of 0 in block <mojo_top_0>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1293 - FF/Latch <ctr/M_ctr_q_33> has a constant value of 0 in block <mojo_top_0>. This FF/Latch will be trimmed during the optimization process.
 WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <ctr/M_ctr_q_36> has a constant value of 0 in block <mojo_top_0>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <ctr/M_ctr_q_34> has a constant value of 0 in block <mojo_top_0>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <ctr/M_ctr_q_35> has a constant value of 0 in block <mojo_top_0>. This FF/Latch will be trimmed during the optimization process.
 WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <ctr/M_ctr_q_37> has a constant value of 0 in block <mojo_top_0>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <ctr/M_ctr_q_40> has a constant value of 0 in block <mojo_top_0>. This FF/Latch will be trimmed during the optimization process.
 WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <ctr/M_ctr_q_38> has a constant value of 0 in block <mojo_top_0>. This FF/Latch will be trimmed during the optimization process.
 WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <ctr/M_ctr_q_39> has a constant value of 0 in block <mojo_top_0>. This FF/Latch will be trimmed during the optimization process.
+WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <ctr/M_ctr_q_40> has a constant value of 0 in block <mojo_top_0>. This FF/Latch will be trimmed during the optimization process.
 WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <ctr/M_ctr_q_41> has a constant value of 0 in block <mojo_top_0>. This FF/Latch will be trimmed during the optimization process.
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_1> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_1> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_2> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_2> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_3> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_3> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_4> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_4> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_5> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_5> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_6> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_6> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_7> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_7> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_8> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_8> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_9> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_9> 
-INFO:Xst:2261 - The FF/Latch <ctr/M_ctr_q_0> in Unit <mojo_top_0> is equivalent to the following 2 FFs/Latches, which will be removed : <player_1_seg/ctr/M_ctr_q_0> <player_2_seg/ctr/M_ctr_q_0> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_10> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_10> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_11> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_11> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_12> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_12> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_13> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_13> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_14> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_14> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_15> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_15> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_16> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_16> 
-INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_17> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <player_2_seg/ctr/M_ctr_q_17> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_1> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_1> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_2> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_2> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_3> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_3> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_4> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_4> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_5> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_5> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_6> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_6> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_7> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_7> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_8> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_8> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_9> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_9> 
+INFO:Xst:2261 - The FF/Latch <ctr/M_ctr_q_0> in Unit <mojo_top_0> is equivalent to the following 2 FFs/Latches, which will be removed : <player_1_seg/ctr/M_ctr_q_0> <timer_seg/ctr/M_ctr_q_0> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_10> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_10> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_11> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_11> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_12> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_12> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_13> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_13> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_14> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_14> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_15> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_15> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_16> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_16> 
+INFO:Xst:2261 - The FF/Latch <player_1_seg/ctr/M_ctr_q_17> in Unit <mojo_top_0> is equivalent to the following FF/Latch, which will be removed : <timer_seg/ctr/M_ctr_q_17> 
 
 Mapping all equations...
 Building and optimizing final netlist ...
-Found area constraint ratio of 100 (+ 0) on block mojo_top_0, actual ratio is 6.
-FlipFlop M_state_q has been replicated 1 time(s)
+Found area constraint ratio of 100 (+ 0) on block mojo_top_0, actual ratio is 4.
 FlipFlop ctr/M_ctr_q_30 has been replicated 1 time(s)
 FlipFlop ctr/M_ctr_q_31 has been replicated 1 time(s)
 FlipFlop ctr/M_ctr_q_32 has been replicated 1 time(s)
-FlipFlop reset_cond/M_stage_q_3 has been replicated 2 time(s)
 
 Final Macro Processing ...
+
+Processing Unit <mojo_top_0> :
+INFO:Xst:741 - HDL ADVISOR - A 4-bit shift register was found for signal <reset_cond/M_stage_q_3> and currently occupies 4 logic cells (2 slices). Removing the set/reset logic would take advantage of SRL32 (and derived) primitives and reduce this to 1 logic cells (1 slices). Evaluate if the set/reset can be removed for this simple shift register. The majority of simple pipeline structures do not need to be set/reset operationally.
+Unit <mojo_top_0> processed.
 
 =========================================================================
 Final Register Report
 
 Macro Statistics
-# Registers                                            : 189
- Flip-Flops                                            : 189
+# Registers                                            : 57
+ Flip-Flops                                            : 57
 
 =========================================================================
 
@@ -409,29 +380,27 @@ Top Level Output File Name         : mojo_top_0.ngc
 
 Primitive and Black Box Usage:
 ------------------------------
-# BELS                             : 442
+# BELS                             : 369
 #      GND                         : 5
-#      INV                         : 38
+#      INV                         : 42
 #      LUT1                        : 19
-#      LUT2                        : 26
+#      LUT2                        : 22
 #      LUT3                        : 38
-#      LUT4                        : 71
-#      LUT5                        : 13
-#      LUT6                        : 54
+#      LUT4                        : 22
+#      LUT5                        : 10
+#      LUT6                        : 33
 #      MUXCY                       : 85
 #      VCC                         : 4
 #      XORCY                       : 89
-# FlipFlops/Latches                : 189
-#      FD                          : 62
-#      FDE                         : 32
-#      FDR                         : 34
-#      FDRE                        : 55
-#      FDS                         : 6
+# FlipFlops/Latches                : 57
+#      FD                          : 21
+#      FDR                         : 32
+#      FDS                         : 4
 # Clock Buffers                    : 1
 #      BUFGP                       : 1
-# IO Buffers                       : 30
-#      IBUF                        : 2
-#      OBUF                        : 22
+# IO Buffers                       : 39
+#      IBUF                        : 5
+#      OBUF                        : 28
 #      OBUFT                       : 6
 # DSPs                             : 1
 #      DSP48A1                     : 1
@@ -443,20 +412,20 @@ Selected Device : 6slx9tqg144-2
 
 
 Slice Logic Utilization: 
- Number of Slice Registers:             189  out of  11440     1%  
- Number of Slice LUTs:                  259  out of   5720     4%  
-    Number used as Logic:               259  out of   5720     4%  
+ Number of Slice Registers:              57  out of  11440     0%  
+ Number of Slice LUTs:                  186  out of   5720     3%  
+    Number used as Logic:               186  out of   5720     3%  
 
 Slice Logic Distribution: 
- Number of LUT Flip Flop pairs used:    324
-   Number with an unused Flip Flop:     135  out of    324    41%  
-   Number with an unused LUT:            65  out of    324    20%  
-   Number of fully used LUT-FF pairs:   124  out of    324    38%  
-   Number of unique control sets:         8
+ Number of LUT Flip Flop pairs used:    193
+   Number with an unused Flip Flop:     136  out of    193    70%  
+   Number with an unused LUT:             7  out of    193     3%  
+   Number of fully used LUT-FF pairs:    50  out of    193    25%  
+   Number of unique control sets:         4
 
 IO Utilization: 
- Number of IOs:                          66
- Number of bonded IOBs:                  31  out of    102    30%  
+ Number of IOs:                          46
+ Number of bonded IOBs:                  40  out of    102    39%  
 
 Specific Feature Utilization:
  Number of BUFG/BUFGCTRLs:                1  out of     16     6%  
@@ -483,7 +452,7 @@ Clock Information:
 -----------------------------------+------------------------+-------+
 Clock Signal                       | Clock buffer(FF name)  | Load  |
 -----------------------------------+------------------------+-------+
-clk                                | BUFGP                  | 189   |
+clk                                | BUFGP                  | 57    |
 -----------------------------------+------------------------+-------+
 
 Asynchronous Control Signals Information:
@@ -495,9 +464,9 @@ Timing Summary:
 Speed Grade: -2
 
    Minimum period: 4.920ns (Maximum Frequency: 203.252MHz)
-   Minimum input arrival time before clock: 3.598ns
+   Minimum input arrival time before clock: 3.526ns
    Maximum output required time after clock: 23.886ns
-   Maximum combinational path delay: No path found
+   Maximum combinational path delay: 5.857ns
 
 Timing Details:
 ---------------
@@ -506,32 +475,32 @@ All values displayed in nanoseconds (ns)
 =========================================================================
 Timing constraint: Default period analysis for Clock 'clk'
   Clock period: 4.920ns (frequency: 203.252MHz)
-  Total number of paths / destination ports: 2983 / 364
+  Total number of paths / destination ports: 2409 / 88
 -------------------------------------------------------------------------
 Delay:               4.920ns (Levels of Logic = 3)
   Source:            ctr/M_ctr_q_25 (FF)
-  Destination:       ctr/M_ctr_q_1 (FF)
+  Destination:       ctr/M_ctr_q_2 (FF)
   Source Clock:      clk rising
   Destination Clock: clk rising
 
-  Data Path: ctr/M_ctr_q_25 to ctr/M_ctr_q_1
+  Data Path: ctr/M_ctr_q_25 to ctr/M_ctr_q_2
                                 Gate     Net
     Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
     ----------------------------------------  ------------
      FDR:C->Q              2   0.525   1.181  M_ctr_q_25 (M_ctr_q_25)
      LUT6:I0->O            3   0.254   1.196  M_ctr_q[41]_GND_3_o_equal_2_o<41>5 (M_ctr_q[41]_GND_3_o_equal_2_o<41>4)
      LUT6:I1->O           16   0.254   1.182  M_ctr_q[41]_GND_3_o_equal_2_o<41>7 (M_ctr_q[41]_GND_3_o_equal_2_o)
-     LUT3:I2->O            1   0.254   0.000  M_ctr_q_1_glue_set (M_ctr_q_1_glue_set)
-     FDR:D                     0.074          M_ctr_q_1
+     LUT3:I2->O            1   0.254   0.000  M_ctr_q_2_glue_set (M_ctr_q_2_glue_set)
+     FDR:D                     0.074          M_ctr_q_2
     ----------------------------------------
     Total                      4.920ns (1.361ns logic, 3.559ns route)
                                        (27.7% logic, 72.3% route)
 
 =========================================================================
 Timing constraint: Default OFFSET IN BEFORE for Clock 'clk'
-  Total number of paths / destination ports: 8 / 8
+  Total number of paths / destination ports: 4 / 4
 -------------------------------------------------------------------------
-Offset:              3.598ns (Levels of Logic = 3)
+Offset:              3.526ns (Levels of Logic = 3)
   Source:            rst_n (PAD)
   Destination:       reset_cond/M_stage_q_3 (FF)
   Destination Clock: clk rising
@@ -541,16 +510,16 @@ Offset:              3.598ns (Levels of Logic = 3)
     Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
     ----------------------------------------  ------------
      IBUF:I->O             1   1.328   0.681  rst_n_IBUF (rst_n_IBUF)
-     INV:I->O              6   0.255   0.875  M_reset_cond_in1_INV_0 (M_reset_cond_in)
+     INV:I->O              4   0.255   0.803  M_reset_cond_in1_INV_0 (M_reset_cond_in)
      begin scope: 'reset_cond:in'
      FDS:S                     0.459          M_stage_q_0
     ----------------------------------------
-    Total                      3.598ns (2.042ns logic, 1.556ns route)
-                                       (56.8% logic, 43.2% route)
+    Total                      3.526ns (2.042ns logic, 1.484ns route)
+                                       (57.9% logic, 42.1% route)
 
 =========================================================================
 Timing constraint: Default OFFSET OUT AFTER for Clock 'clk'
-  Total number of paths / destination ports: 296484 / 21
+  Total number of paths / destination ports: 296480 / 15
 -------------------------------------------------------------------------
 Offset:              23.886ns (Levels of Logic = 29)
   Source:            ctr/M_ctr_q_30 (FF)
@@ -564,37 +533,56 @@ Offset:              23.886ns (Levels of Logic = 29)
      FD:C->Q              29   0.525   1.469  M_ctr_q_30 (M_ctr_q_30)
      end scope: 'ctr:value<4>'
      begin scope: 'M_ctr_value[15]_PWR_1_o_div_0:a<4>'
-     INV:I->O              1   0.255   0.000  Madd_a[15]_GND_9_o_add_27_OUT[15:0]_lut<4>_INV_0 (Madd_a[15]_GND_9_o_add_27_OUT[15:0]_lut<4>)
-     MUXCY:S->O            1   0.215   0.000  Madd_a[15]_GND_9_o_add_27_OUT[15:0]_cy<4> (Madd_a[15]_GND_9_o_add_27_OUT[15:0]_cy<4>)
-     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_9_o_add_27_OUT[15:0]_cy<5> (Madd_a[15]_GND_9_o_add_27_OUT[15:0]_cy<5>)
-     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_9_o_add_27_OUT[15:0]_cy<6> (Madd_a[15]_GND_9_o_add_27_OUT[15:0]_cy<6>)
-     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_9_o_add_27_OUT[15:0]_cy<7> (Madd_a[15]_GND_9_o_add_27_OUT[15:0]_cy<7>)
-     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_9_o_add_27_OUT[15:0]_cy<8> (Madd_a[15]_GND_9_o_add_27_OUT[15:0]_cy<8>)
-     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_9_o_add_27_OUT[15:0]_cy<9> (Madd_a[15]_GND_9_o_add_27_OUT[15:0]_cy<9>)
-     XORCY:CI->O           3   0.206   1.221  Madd_a[15]_GND_9_o_add_27_OUT[15:0]_xor<10> (a[15]_GND_9_o_add_27_OUT[15:0]<10>)
+     INV:I->O              1   0.255   0.000  Madd_a[15]_GND_8_o_add_27_OUT[15:0]_lut<4>_INV_0 (Madd_a[15]_GND_8_o_add_27_OUT[15:0]_lut<4>)
+     MUXCY:S->O            1   0.215   0.000  Madd_a[15]_GND_8_o_add_27_OUT[15:0]_cy<4> (Madd_a[15]_GND_8_o_add_27_OUT[15:0]_cy<4>)
+     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_8_o_add_27_OUT[15:0]_cy<5> (Madd_a[15]_GND_8_o_add_27_OUT[15:0]_cy<5>)
+     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_8_o_add_27_OUT[15:0]_cy<6> (Madd_a[15]_GND_8_o_add_27_OUT[15:0]_cy<6>)
+     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_8_o_add_27_OUT[15:0]_cy<7> (Madd_a[15]_GND_8_o_add_27_OUT[15:0]_cy<7>)
+     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_8_o_add_27_OUT[15:0]_cy<8> (Madd_a[15]_GND_8_o_add_27_OUT[15:0]_cy<8>)
+     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_8_o_add_27_OUT[15:0]_cy<9> (Madd_a[15]_GND_8_o_add_27_OUT[15:0]_cy<9>)
+     XORCY:CI->O           3   0.206   1.221  Madd_a[15]_GND_8_o_add_27_OUT[15:0]_xor<10> (a[15]_GND_8_o_add_27_OUT[15:0]<10>)
      LUT6:I0->O            3   0.254   0.874  o<0>21111 (o<0>2111)
-     LUT5:I3->O            2   0.250   1.156  o<2>14_SW0 (N12)
+     LUT5:I3->O            2   0.250   1.156  o<2>14_SW0 (N8)
      LUT6:I1->O           13   0.254   1.553  o<2>21 (o<2>)
-     LUT6:I0->O            1   0.254   0.000  Madd_a[15]_GND_9_o_add_31_OUT[15:0]_lut<5> (Madd_a[15]_GND_9_o_add_31_OUT[15:0]_lut<5>)
-     MUXCY:S->O            1   0.215   0.000  Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<5> (Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<5>)
-     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<6> (Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<6>)
-     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<7> (Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<7>)
-     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<8> (Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<8>)
-     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<9> (Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<9>)
-     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<10> (Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<10>)
-     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<11> (Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<11>)
-     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<12> (Madd_a[15]_GND_9_o_add_31_OUT[15:0]_cy<12>)
-     XORCY:CI->O           1   0.206   1.137  Madd_a[15]_GND_9_o_add_31_OUT[15:0]_xor<13> (a[15]_GND_9_o_add_31_OUT[15:0]<13>)
+     LUT6:I0->O            1   0.254   0.000  Madd_a[15]_GND_8_o_add_31_OUT[15:0]_lut<5> (Madd_a[15]_GND_8_o_add_31_OUT[15:0]_lut<5>)
+     MUXCY:S->O            1   0.215   0.000  Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<5> (Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<5>)
+     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<6> (Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<6>)
+     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<7> (Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<7>)
+     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<8> (Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<8>)
+     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<9> (Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<9>)
+     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<10> (Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<10>)
+     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<11> (Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<11>)
+     MUXCY:CI->O           1   0.023   0.000  Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<12> (Madd_a[15]_GND_8_o_add_31_OUT[15:0]_cy<12>)
+     XORCY:CI->O           1   0.206   1.137  Madd_a[15]_GND_8_o_add_31_OUT[15:0]_xor<13> (a[15]_GND_8_o_add_31_OUT[15:0]<13>)
      LUT6:I0->O            1   0.254   1.112  o<0>25 (o<0>24)
      LUT6:I1->O            2   0.254   0.725  o<0>28 (o<0>)
      end scope: 'M_ctr_value[15]_PWR_1_o_div_0:o<0>'
-     DSP48A1:B0->P1        1   5.145   0.790  Maddsub_n0042 (ones<1>)
+     DSP48A1:B0->P1        1   5.145   0.790  Maddsub_n0033 (ones<1>)
      LUT4:I2->O            7   0.250   1.186  Sh321 (Sh32)
      LUT4:I0->O            1   0.254   0.681  io_seg<4>1 (io_seg_4_OBUF)
      OBUF:I->O                 2.912          io_seg_4_OBUF (io_seg<4>)
     ----------------------------------------
     Total                     23.886ns (11.982ns logic, 11.904ns route)
                                        (50.2% logic, 49.8% route)
+
+=========================================================================
+Timing constraint: Default path analysis
+  Total number of paths / destination ports: 4 / 4
+-------------------------------------------------------------------------
+Delay:               5.857ns (Levels of Logic = 3)
+  Source:            io_button<3> (PAD)
+  Destination:       io_led<3> (PAD)
+
+  Data Path: io_button<3> to io_led<3>
+                                Gate     Net
+    Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
+    ----------------------------------------  ------------
+     IBUF:I->O             1   1.328   0.681  io_button_3_IBUF (io_button_3_IBUF)
+     INV:I->O              1   0.255   0.681  io_led<3>1_INV_0 (io_led_3_OBUF)
+     OBUF:I->O                 2.912          io_led_3_OBUF (io_led<3>)
+    ----------------------------------------
+    Total                      5.857ns (4.495ns logic, 1.362ns route)
+                                       (76.7% logic, 23.3% route)
 
 =========================================================================
 
@@ -612,14 +600,14 @@ clk            |    4.920|         |         |         |
 =========================================================================
 
 
-Total REAL time to Xst completion: 8.00 secs
-Total CPU time to Xst completion: 7.79 secs
+Total REAL time to Xst completion: 7.00 secs
+Total CPU time to Xst completion: 6.77 secs
  
 --> 
 
-Total memory usage is 4513928 kilobytes
+Total memory usage is 4512904 kilobytes
 
 Number of errors   :    0 (   0 filtered)
-Number of warnings :   22 (   0 filtered)
-Number of infos    :   20 (   0 filtered)
+Number of warnings :   19 (   0 filtered)
+Number of infos    :   22 (   0 filtered)
 

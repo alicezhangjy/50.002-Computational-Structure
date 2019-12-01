@@ -17,18 +17,15 @@ module mojo_top_0 (
     input avr_tx,
     output reg avr_rx,
     input avr_rx_busy,
+    output reg [3:0] io_led,
     output reg [7:0] io_seg,
-    output reg [5:0] io_sel,
-    input [4:0] io_button,
-    input [23:0] io_dip,
-    input next
+    output reg [7:0] io_sel,
+    input [3:0] io_button
   );
   
   
   
   reg rst;
-  
-  reg [7:0] result;
   
   reg [15:0] ones;
   
@@ -68,30 +65,20 @@ module mojo_top_0 (
     .seg(M_player_2_seg_seg),
     .sel(M_player_2_seg_sel)
   );
-  localparam HOLD_state = 1'd0;
-  localparam START_state = 1'd1;
-  
-  reg M_state_d, M_state_q = HOLD_state;
-  wire [32-1:0] M_pn_gen_num;
-  reg [1-1:0] M_pn_gen_rst;
-  reg [1-1:0] M_pn_gen_next;
-  reg [32-1:0] M_pn_gen_seed;
-  pn_gen_5 pn_gen (
+  wire [7-1:0] M_timer_seg_seg;
+  wire [3-1:0] M_timer_seg_sel;
+  reg [12-1:0] M_timer_seg_values;
+  multi_seven_seg_3 timer_seg (
     .clk(clk),
-    .rst(M_pn_gen_rst),
-    .next(M_pn_gen_next),
-    .seed(M_pn_gen_seed),
-    .num(M_pn_gen_num)
+    .rst(rst),
+    .values(M_timer_seg_values),
+    .seg(M_timer_seg_seg),
+    .sel(M_timer_seg_sel)
   );
   
   always @* begin
-    M_state_d = M_state_q;
-    
     M_reset_cond_in = ~rst_n;
     rst = M_reset_cond_out;
-    M_pn_gen_seed = M_seed_q;
-    M_pn_gen_next = 1'h0;
-    M_pn_gen_rst = rst;
     led = 8'h00;
     spi_miso = 1'bz;
     spi_channel = 4'bzzzz;
@@ -100,36 +87,22 @@ module mojo_top_0 (
     ones = M_ctr_value - tens * 4'ha;
     M_player_1_seg_values = {M_ctr_value[8+3-:4], tens[0+3-:4], ones[0+3-:4]};
     M_player_2_seg_values = {M_ctr_value[8+3-:4], tens[0+3-:4], ones[0+3-:4]};
+    M_timer_seg_values = {M_ctr_value[8+3-:4], tens[0+3-:4], ones[0+3-:4]};
     io_seg = ~M_player_1_seg_seg;
     io_seg = ~M_player_2_seg_seg;
+    io_seg = ~M_timer_seg_seg;
     io_sel[0+2-:3] = ~M_player_1_seg_sel;
     io_sel[3+2-:3] = ~M_player_2_seg_sel;
-    result = M_pn_gen_num[0+7-:8];
-    led[0+7-:8] = result;
-    
-    case (M_state_q)
-      HOLD_state: begin
-        led[0+7-:8] = result;
-        if (io_button[0+0-:1] == 1'h1) begin
-          M_state_d = START_state;
-        end
-      end
-      START_state: begin
-        M_pn_gen_next = 1'h1;
-        M_state_d = HOLD_state;
-        result = M_pn_gen_num[0+7-:8];
-        led[0+7-:8] = result;
-      end
-    endcase
+    io_sel[6+1-:2] = ~M_timer_seg_sel;
+    io_led[0+3-:4] = 4'hf;
+    io_led[0+3-:4] = ~io_button[0+3-:4];
   end
   
   always @(posedge clk) begin
     if (rst == 1'b1) begin
       M_seed_q <= 1'h0;
-      M_state_q <= 1'h0;
     end else begin
       M_seed_q <= M_seed_d;
-      M_state_q <= M_state_d;
     end
   end
   

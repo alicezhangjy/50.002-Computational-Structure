@@ -11,16 +11,16 @@ module mojo_top (
     input avr_tx,           // AVR TX (FPGA RX)
     output avr_rx,          // AVR RX (FPGA TX)
     input avr_rx_busy,      // AVR RX buffer full
-    //output io_led [3][8],   // LEDs on IO Shield
+    output io_led [4],   // LEDs on IO Shield
     output io_seg [8],      // 7-segment LEDs on IO Shield
-    output io_sel [6],      // Digit select on IO Shield
-    input io_button [5],    // 5 buttons on IO Shield
-    input io_dip [3][8],     // DIP switches on IO Shield
-    input next
+    output io_sel [8],      // Digit select on IO Shield
+    input io_button [4]     // 4 buttons on IO Shield
+    //input io_dip [3][8]     // DIP switches on IO Shield
+    //input next
   ) {
   
   sig rst;                  // reset signal
-  sig result [8];          // result of our operations
+  //sig result [8];          // result of our operations
   sig ones [16];
   sig tens [16];
   
@@ -34,21 +34,22 @@ module mojo_top (
     counter ctr (#SIZE(16), #TOP(99), #DIV(26), #UP(0));    // COUNTER: connect counter to reset signal and clk
     multi_seven_seg player_1_seg;                           // SEVEN SEGMENT: connect seven_segs to reset signal and clk
     multi_seven_seg player_2_seg;
-      
+    multi_seven_seg timer_seg;
+    /*
     fsm state = {
       DOWN, 
       UP
-    };
+    };*/
   }
-  pn_gen pn_gen;     //RANDOM: pseudo-rand number generator
+  //pn_gen pn_gen;     //RANDOM: pseudo-rand number generator
 }
   
   always {
     reset_cond.in = ~rst_n; // input raw inverted reset signal
     rst = reset_cond.out;   // conditioned reset_cond
-    pn_gen.seed = seed.q;              // use seed.q as the seed
-    pn_gen.next = 0;                   // don't generate new numbers
-    pn_gen.rst = rst;                  // connect rst by default
+    //pn_gen.seed = seed.q;              // use seed.q as the seed
+    //pn_gen.next = 0;                   // don't generate new numbers
+    //pn_gen.rst = rst;                  // connect rst by default
        
     led = 8h00;             // turn LEDs off
     spi_miso = bz;          // not using SPI
@@ -58,13 +59,21 @@ module mojo_top (
     tens = ctr.value/d10;
     ones = ctr.value - tens*d10;
     player_1_seg.values = {ctr.value[11:8], tens[3:0], ones[3:0]};    //SEVEN SEGMENT - INPUT: 4-bit numbers
+    //player_1_seg.values = {4d0, 4d1, 4d2};
     player_2_seg.values = {ctr.value[11:8], tens[3:0], ones[3:0]};    //SEVEN SEGMENT - INPUT: 4-bit numbers
-     
+    timer_seg.values = {ctr.value[11:8], tens[3:0], ones[3:0]};    //SEVEN SEGMENT - INPUT: 4-bit numbers
+    
     io_seg = ~player_1_seg.seg;           // SEVEN SEGMENT: connect segments to counter
     io_seg = ~player_2_seg.seg;           // SEVEN SEGMENT: connect segments to counter
+    io_seg = ~timer_seg.seg;
     io_sel[2:0] = ~player_1_seg.sel;      // SEVEN SEGMENT: connect digit select to the driver
     io_sel[5:3] = ~player_2_seg.sel;      // SEVEN SEGMENT: connect digit select to the driver
+    io_sel[7:6] = ~timer_seg.sel;
     
+    io_led[3:0] = 15;
+    io_led[3:0] = ~io_button[3:0];
+    
+    /*
     result = pn_gen.num[7:0]; // RANDOM: get random number
     led[7:0] = result;
     
@@ -78,6 +87,7 @@ module mojo_top (
         state.d = state.DOWN;
         result = pn_gen.num[7:0];    // RANDOM: get random number
         led[7:0] = result;
-    }
+    
+    }*/
   }
 }  

@@ -1,0 +1,24 @@
+module boolean (         // This module is for logic operations
+    input alufn[6],      // 6bit ALUFN input signal
+    input a[16],         // 16bit input a
+    input b[16],         // 16bit input b
+    output boole[16]     // 16bit output boole
+  ) {
+  
+  // JSIM code: .subckt boole32 ALUFN[3:0] A[15:0] B[15:0] boole[15:0]
+
+  always {
+    case(alufn[3:0]){              // ALUFN 01xxxx
+      4b1110: boole = a | b;       // 011110 OR
+      4b1111: boole = ~(a | b);    // 011111 NOR      
+      4b1000: boole = a & b;       // 011000 AND      
+      4b0001: boole = ~(a & b);    // 010001 NAND      
+      4b0110: boole = a ^ b;       // 010110 XOR
+      4b0111: boole = ~(a ^ b);    // 010111 XNOR      
+      4b1010: boole = a;           // 011010 A
+      4b1100: boole = b;           // 011100 B
+      
+      default: boole = 1b0;        // 01xxxx (nothing)
+      }
+  }
+}

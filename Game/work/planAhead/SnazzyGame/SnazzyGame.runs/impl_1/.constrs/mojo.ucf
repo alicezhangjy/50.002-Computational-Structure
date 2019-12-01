@@ -1,0 +1,110 @@
+CONFIG VCCAUX  = 3.3;
+
+NET "clk" TNM_NET = "clk";
+TIMESPEC TS_clk = PERIOD "clk" 50 MHz HIGH 50 %;
+
+NET "clk" LOC = P56;
+NET "clk" IOSTANDARD = LVTTL;
+NET "rst_n" LOC = P38;
+NET "rst_n" IOSTANDARD = LVTTL;
+
+NET "cclk" LOC = P70 | IOSTANDARD = LVTTL;
+
+NET "led[0]" LOC = P134;
+NET "led[0]" IOSTANDARD = LVTTL;
+NET "led[1]" LOC = P133;
+NET "led[1]" IOSTANDARD = LVTTL;
+NET "led[2]" LOC = P132;
+NET "led[2]" IOSTANDARD = LVTTL;
+NET "led[3]" LOC = P131;
+NET "led[3]" IOSTANDARD = LVTTL;
+NET "led[4]" LOC = P127;
+NET "led[4]" IOSTANDARD = LVTTL;
+NET "led[5]" LOC = P126;
+NET "led[5]" IOSTANDARD = LVTTL;
+NET "led[6]" LOC = P124;
+NET "led[6]" IOSTANDARD = LVTTL;
+NET "led[7]" LOC = P123;
+NET "led[7]" IOSTANDARD = LVTTL;
+
+NET "spi_mosi" LOC = P44 | IOSTANDARD = LVTTL;
+NET "spi_miso" LOC = P45;
+NET "spi_miso" IOSTANDARD = LVTTL;
+NET "spi_ss" LOC = P48 | IOSTANDARD = LVTTL;
+NET "spi_sck" LOC = P43 | IOSTANDARD = LVTTL;
+NET "spi_channel[0]" LOC = P46;
+NET "spi_channel[0]" IOSTANDARD = LVTTL;
+NET "spi_channel[1]" LOC = P61;
+NET "spi_channel[1]" IOSTANDARD = LVTTL;
+NET "spi_channel[2]" LOC = P62;
+NET "spi_channel[2]" IOSTANDARD = LVTTL;
+NET "spi_channel[3]" LOC = P65;
+NET "spi_channel[3]" IOSTANDARD = LVTTL;
+
+NET "avr_tx" LOC = P55 | IOSTANDARD = LVTTL;
+NET "avr_rx" LOC = P59;
+NET "avr_rx" IOSTANDARD = LVTTL;
+NET "avr_rx_busy" LOC = P39 | IOSTANDARD = LVTTL;
+
+NET "io_seg[0]" LOC = P1;
+NET "io_seg[0]" IOSTANDARD = LVTTL;
+NET "io_seg[1]" LOC = P2;
+NET "io_seg[1]" IOSTANDARD = LVTTL;
+NET "io_seg[2]" LOC = P5;
+NET "io_seg[2]" IOSTANDARD = LVTTL;
+NET "io_seg[3]" LOC = P6;
+NET "io_seg[3]" IOSTANDARD = LVTTL;
+NET "io_seg[4]" LOC = P7;
+NET "io_seg[4]" IOSTANDARD = LVTTL;
+NET "io_seg[5]" LOC = P8;
+NET "io_seg[5]" IOSTANDARD = LVTTL;
+NET "io_seg[6]" LOC = P9;
+NET "io_seg[6]" IOSTANDARD = LVTTL;
+#NET "io_seg<7>" LOC = P141 | IOSTANDARD = LVTTL;
+
+NET "io_sel[0]" LOC = P11;
+NET "io_sel[0]" IOSTANDARD = LVTTL;
+NET "io_sel[1]" LOC = P12;
+NET "io_sel[1]" IOSTANDARD = LVTTL;
+NET "io_sel[2]" LOC = P14;
+NET "io_sel[2]" IOSTANDARD = LVTTL;
+NET "io_sel[3]" LOC = P16;
+NET "io_sel[3]" IOSTANDARD = LVTTL;
+NET "io_sel[4]" LOC = P15;
+NET "io_sel[4]" IOSTANDARD = LVTTL;
+NET "io_sel[5]" LOC = P17;
+NET "io_sel[5]" IOSTANDARD = LVTTL;
+NET "io_sel[6]" LOC = P21;
+NET "io_sel[6]" IOSTANDARD = LVTTL;
+NET "io_sel[7]" LOC = P22;
+NET "io_sel[7]" IOSTANDARD = LVTTL;
+
+# PULLDOWN is needed to prevent floating inputs
+# | PULLDOWN;
+NET "bb1" LOC = P99;
+NET "bb1" IOSTANDARD = LVTTL;
+# | PULLDOWN;
+NET "bb2" LOC = P101;
+NET "bb2" IOSTANDARD = LVTTL;
+# | PULLDOWN;
+NET "by1" LOC = P104;
+NET "by1" IOSTANDARD = LVTTL;
+# | PULLDOWN;
+NET "by2" LOC = P111;
+NET "by2" IOSTANDARD = LVTTL;
+
+NET "bb1_led" LOC = P100;
+NET "bb1_led" IOSTANDARD = LVTTL;
+NET "bb2_led" LOC = P102;
+NET "bb2_led" IOSTANDARD = LVTTL;
+NET "by1_led" LOC = P105;
+NET "by1_led" IOSTANDARD = LVTTL;
+NET "by2_led" LOC = P112;
+NET "by2_led" IOSTANDARD = LVTTL;
+
+NET "add_led" LOC = P80 | IOSTANDARD = LVTTL;
+NET "mul_led" LOC = P74 | IOSTANDARD = LVTTL;
+#NET "io_led<4>" LOC = P92 | IOSTANDARD = LVTTL;
+#NET "io_led<5>" LOC = P93 | IOSTANDARD = LVTTL;
+#NET "io_led<6>" LOC = P87 | IOSTANDARD = LVTTL;
+#NET "io_led<7>" LOC = P88 | IOSTANDARD = LVTTL;

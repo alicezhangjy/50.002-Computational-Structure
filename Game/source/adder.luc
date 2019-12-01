@@ -1,0 +1,39 @@
+module adder (         // This module is for adding/subtracting
+    input alufn[6],    // 6bit ALUFN input signal
+    input a[16],       // 16bit input signal a
+    input b[16],       // 16bit input signal b
+    output op[16],     // 16bit output signal op
+    output z[1],       // 1bit output z
+    output v[1],       // 1bit output v
+    output n[1]        // 1bit output n
+  ) {
+  
+  // JSIM code (adder / subtractor): .subckt adder32 ALUFN[0] A[15:0] B[15:0] s[15:0] z v n    
+  
+  sig op_sig[16];     // 16bit output signal
+
+  always {   
+        case(alufn[0]){        // ALUFN 0000xx
+          1b0:                  // ALUFN 000000 (addition)
+            op_sig = a+b;
+            op = op_sig;
+            z = ~|op_sig;
+            v = (((a[15])&(b[15])&(~op_sig[15])) | ((~a[15])&(~b[15])&(op_sig[15])));
+            n = op_sig[15];
+        
+          1b1:                  // ALUFN 000001 (subtraction)
+            op_sig = a-b;
+            op = op_sig;
+            z = ~|op_sig;
+            v = (((a[15])&(b[15])&(~op_sig[15])) | ((~a[15])&(~b[15])&(op_sig[15])));
+            n = op_sig[15];
+        
+          default:               // ALUFN 00000x (nothing)
+            op_sig = 0;
+            op = 0;
+            z = 0;
+            v = 0;
+            n = 0;   
+      }
+    }
+  }

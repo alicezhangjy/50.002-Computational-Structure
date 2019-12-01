@@ -5,8 +5,8 @@
     <src>multi_seven_seg.luc</src>
     <src top="true">mojo_top.luc</src>
     <ucf>mojo.ucf</ucf>
-    <component>pn_gen.luc</component>
     <component>decoder.luc</component>
+    <component>pn_gen.luc</component>
     <component>reset_conditioner.luc</component>
     <component>counter.luc</component>
   </files>
