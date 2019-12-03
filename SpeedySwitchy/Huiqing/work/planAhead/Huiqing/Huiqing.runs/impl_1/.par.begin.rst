@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<ProcessHandle Version="1" Minor="0">
-    <Process Command="par" Owner="linhu" Host="LAPTOP-MATODA92" Pid="6504">
-    </Process>
-</ProcessHandle>

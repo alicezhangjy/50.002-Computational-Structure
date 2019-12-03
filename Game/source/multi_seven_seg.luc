@@ -20,6 +20,7 @@ module multi_seven_seg #(
   decoder digit_dec (#WIDTH(DIGIT_BITS)); // digit decoder
  
   always {
+    ctr.start = 1;
     seg_dec.char = values[ctr.value];     // select the value for the active digit
     seg = seg_dec.segs;                   // output the decoded value
  

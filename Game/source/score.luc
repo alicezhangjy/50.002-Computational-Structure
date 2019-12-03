@@ -1,22 +1,33 @@
-module score (
+module score(
+
     input clk,               // clock
     input rst,               // reset
-    input p1,                // output player1 for score
-    input p2,                // output player2 for score
-    output scr1[10],          // score of player 1  
-    output scr2[10]          // score of player 2
+    input p1[3],                // output player1 for score
+    input p2[3],                // output player2 for score
+    input init,
+    input start,
+    input clear,
+    output scr1[16],          // score of player 1  
+    output scr2[16],           // score of player 2
+    output scrState[1],
+    output ready[1],
+    input ctdstart
     
   ) {
-  alu alu; //import ALU modules
-    
+  
   .clk(clk){
-    .rst(rst){  
+    .rst(rst){
+      pn_gen rand;
+      counter ctr (#SIZE(16), #TOP(99), #DIV(26), #UP(0));    // COUNTER: connect counter to reset signal and clk
+      counter countdown (#SIZE(16), #TOP(5), #DIV(26), #UP(0));   
       fsm state = {ADD,MUL}; // 2 different modes of game play
-      dff score1[10]; //register that stores the score of player 1  
-      dff score2[10]; //register that stores the score of player 2  
+      dff score1[16]; //register that stores the score of player 1  
+      dff score2[16]; //register that stores the score of player 2
+      dff nextTime[8];  
     }
   }
   
+  alu alu;  
    
   always {
     /*Initialise ALU module*/
@@ -24,62 +35,130 @@ module score (
     alu.a = 0;
     alu.b = 0;
     
+    /*Initialise ALU module*/
+    rand.seed = 39;
+    rand.next = 1;
+    
+    countdown.start = 0;
+    ctr.start = start;
+    ready = 0;
+    if (clear == 1){
+      score1.d = 0;
+      score2.d = 0;
+    }
+    if (init == 1) {
+      countdown.start = ctdstart;
+      score1.d = countdown.value;
+      score2.d = countdown.value;
+    }
+    if (countdown.value == 0){
+        score1.d = 0;
+        score2.d = 0;
+        nextTime.d = ctr.value - 5 - rand.num[3:0];
+        state.d = state.ADD;
+        ready = 1;     
+    }
+    
     scr1 = score1.q; // set outputs as data in register
-    scr2 = score2.q;   
+    scr2 = score2.q;
+    scrState = bz; 
+    if (state.q == state.ADD){scrState = 0;}
+    if (state.q == state.MUL){scrState = 1;}
+    
+    if (score1.q > d999) {
+      score1.d = d999;
+    }
+    
+    if (score1.q < 0) {
+      score1.d = 0;
+    }
+    
+    if (score2.q > d999) {
+      score2.d = d999;
+    }
+    
+    if (score2.q < 0) {
+      score2.d = 0;
+    }
+    
     
     case(state.q){
       state.ADD: // game mode is Addition
         if (p1 == 1 ){  // correct input
-          alu.alufn = 000000;
+          //score1.d = score1.q + 1;
+          alu.alufn = 6b000000;
           alu.a = score1.q;
-          alu.b = 1;
-          score1.d = alu.z;
+          alu.b = 16b1;
+          score1.d = alu.alu;
         }
         if (p2 == 1 ){  // correct input
-          alu.alufn = 000000;
-          alu.a = score1.q;
-          alu.b = 1;
-          score1.d = alu.z;
+          //score2.d = score2.q + 1;
+          alu.alufn = 6b000000;
+          alu.a = score2.q;
+          alu.b = 16b1;
+          score2.d = alu.alu;
         }
-        if (p1 == 2 ){  // wrong input
-          alu.alufn = 000001;
-          alu.a = score1.q;
-          alu.b = 1;
-          score1.d = alu.z;
+        if (score1.q != 0){
+          if (p1 == 2 ){  // wrong input
+            //score1.d = score1.q - 1;
+            alu.alufn = 6b000001;
+            alu.a = score1.q;
+            alu.b = 1;
+            score1.d = alu.alu;
+          }
         }
-        if (p2 == 2 ){  // wrong input
-          alu.alufn = 000001;
-          alu.a = score1.q;
-          alu.b = 1;
-          score1.d = alu.z;
+        if (score2.q != 0){
+          if (p2 == 2 ){  // wrong input
+            //score2.d = score2.q - 1;
+            alu.alufn = 6b000001;
+            alu.a = score2.q;
+            alu.b = 16b1;
+            score2.d = alu.alu;
+          }
+        }
+        
+        if(ctr.value[7:0] <= nextTime.q){
+          state.d = state.MUL;
+          nextTime.d = ctr.value - 2 - rand.num[1:0];
         }
                
       state.MUL: // game mode is Multiplication
         if ( p1 == 1 ){  // correct input
-          alu.alufn = 100000;
+          //score1.d = score1.q * 2;
+          alu.alufn = 6b100000;
           alu.a = score1.q;
-          alu.b = 2;
-          score1.d = alu.z;
+          alu.b = 16b1;
+          score1.d = alu.alu;
         }
         if ( p2 == 1 ){  // correct input
-          alu.alufn = 100000;
-          alu.a = score1.q;
-          alu.b = 2;
-          score1.d = alu.z;
+          alu.alufn = 6b100000;
+          alu.a = score2.q;
+          alu.b = 16b1;
+          score2.d = alu.alu;
         }
-        if ( p1 == 2 ){  // wrong input
-          alu.alufn = 100001;
-          alu.a = score1.q;
-          alu.b = 2;
-          score1.d = alu.z;
+        if (score1.q != 0){
+          if ( p1 == 2 ){  // wrong input
+            //score1.d = score1.q - 1;
+            alu.alufn = 6b100001;
+            alu.a = score1.q;
+            alu.b = 16b1;
+            score1.d = alu.alu;
+          }
         }
-        if ( p2 == 2 ){  // wrong input
-          alu.alufn = 100001;
-          alu.a = score1.q;
-          alu.b = 2;
-          score1.d = alu.z; 
+        if (score2.q != 0){
+          if ( p2 == 2 ){  // wrong input
+            //score2.d = score2.q - 1;
+            alu.alufn = 6b100001;
+            alu.a = score2.q;
+            alu.b = 16b1;
+            score2.d = alu.alu;
+          }
         }
+       if(ctr.value <= nextTime.q){
+          state.d = state.ADD;
+          nextTime.d = ctr.value - 5 - rand.num[3:0];
+        }
+        
     }
   }
 }
-  

@@ -46,7 +46,7 @@ module alu (             // This module is for 16bit ALU
       2b11:                       // 11xxxx compare module
         alu = compare.op;
       default:
-        alu = 0;                 // (nothing)
+        alu = adder.op;                 // adder
     }
     
     case(alufn[5:0]){

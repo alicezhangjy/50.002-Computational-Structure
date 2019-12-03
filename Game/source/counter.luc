@@ -34,7 +34,8 @@ module counter #(
   )(
     input clk,
     input rst,
-    output value[SIZE]
+    output value[SIZE], 
+    input start
   ) {
   
   .clk(clk), .rst(rst) {
@@ -46,16 +47,20 @@ module counter #(
   always {
     value = ctr.q[SIZE+DIV-1-:SIZE]; // set the output
     
-    if (UP) { // when this is an up counter
-      ctr.d = ctr.q + 1; // increase
-      if (TOP != 0 && ctr.q == MAX_VALUE) { // reached the top?
-        ctr.d = 0; // reset
+    if (start) {
+      if (UP) { // when this is an up counter
+        ctr.d = ctr.q + 1; // increase
+        if (TOP != 0 && ctr.q == MAX_VALUE) { // reached the top?
+          ctr.d = 0; // reset
+        }
+      } else { // down counter
+        ctr.d = ctr.q - 1; // decrease
+        if (TOP != 0 && ctr.q == 0) { // reached the bottom?
+          ctr.d = MAX_VALUE; // reset to top
+        }
       }
-    } else { // down counter
-      ctr.d = ctr.q - 1; // decrease
-      if (TOP != 0 && ctr.q == 0) { // reached the bottom?
-        ctr.d = MAX_VALUE; // reset to top
-      }
+    }else{
+      ctr.d = MAX_VALUE;
     }
   }
 }

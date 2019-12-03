@@ -1,11 +1,11 @@
-set projDir "C:/Users/1003810/Documents/mojo/ALU_simple/work/planAhead"
-set projName "ALU_simple"
+set projDir "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/ALU/work/planAhead"
+set projName "16 Bit ALU"
 set topName top
 set device xc6slx9-2tqg144
 if {[file exists "$projDir/$projName"]} { file delete -force "$projDir/$projName" }
 create_project $projName "$projDir/$projName" -part $device
 set_property design_mode RTL [get_filesets sources_1]
-set verilogSources [list "C:/Users/1003810/Documents/mojo/ALU_simple/work/verilog/mojo_top_0.v" "C:/Users/1003810/Documents/mojo/ALU_simple/work/verilog/reset_conditioner_1.v"]
+set verilogSources [list "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/ALU/work/verilog/mojo_top_0.v" "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/ALU/work/verilog/reset_conditioner_1.v" "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/ALU/work/verilog/alu_2.v" "C:/Users/linhu/OneDrive - Singapore University of Technology and Design/SUTD/Term 4/Comp Struct/1D/50.002-Computational-Structure/ALU/work/verilog/adder_3.v"]
 import_files -fileset [get_filesets sources_1] -force -norecurse $verilogSources
 set ucfSources [list  "C:/Program\ Files/Mojo\ IDE/library/components/io_shield.ucf" "C:/Program\ Files/Mojo\ IDE/library/components/mojo.ucf"]
 import_files -fileset [get_filesets constrs_1] -force -norecurse $ucfSources

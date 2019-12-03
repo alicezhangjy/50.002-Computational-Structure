@@ -36,10 +36,14 @@ module mojo_top (
   
   const CYCLE = 26; // define no. of cycles to go through base on bits
   
-  always {
+  alu alu;
+  
+  always {    
     error = io_dip[0][0];
-    a = 16b1100001010010010 + error;
-    b = 16b0011000100010100;
+    alu.a = 16b1 + error;
+    alu.b = 16b1;
+    alu.alufn = 6b000000;
+    
     //a = -15726;
     //b = 12564;
     reset_cond.in = ~rst_n; // input raw inverted reset signal
@@ -78,8 +82,9 @@ module mojo_top (
         
       state.ADD:
         counter.d = counter.q + 1; // counter addition
-        op = 16b1111001110100110; // op = -3162 
-        sum.d = a+b; // operator for a and b
+        op = 16d2; // op = -3162 
+        
+        sum.d = alu.alu; // operator for a and b
         io_led[0] = sum.q[7:0]; // displays the output of operation on IO LED
         io_led[1] = sum.q[15:8];
         if (op == sum.q){ // display if the preset matches the operation output on the first IO LED
@@ -92,16 +97,17 @@ module mojo_top (
             counter.d = 0;
             }
           else{
+            led[0] = alu.alu;
             if (op == sum.q){ // if the test is correct move to next state
               counter.d = 0;
-              state.d = state.SUB;
+              state.d = state.IDLE;
             } else { // else display error state
               counter.d = 0;
               state.d = state.ERR;
             }
           }
         }
-        
+      /*
       state.SUB:
         counter.d = counter.q + 1;
         op = 16b1001000101111110;
@@ -407,10 +413,11 @@ module mojo_top (
               counter.d = 0;
             }
           }
-        }
+        }*/
       state.ERR:
         counter.d = counter.q + 1;
         io_led[2] = -1; // lights up LED to display error
+        led[0] = alu.alu;
         if (counter.q[CYCLE] == 1) {
           state.d = state.IDLE; // moves back to IDLE and end the test
           counter.d = 0;

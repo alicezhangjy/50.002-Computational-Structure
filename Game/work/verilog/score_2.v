@@ -7,13 +7,53 @@
 module score_2 (
     input clk,
     input rst,
-    input p1,
-    input p2,
-    output reg [9:0] scr1,
-    output reg [9:0] scr2
+    input [2:0] p1,
+    input [2:0] p2,
+    input init,
+    input start,
+    input clear,
+    output reg [15:0] scr1,
+    output reg [15:0] scr2,
+    output reg [0:0] scrState,
+    output reg [0:0] ready,
+    input ctdstart
   );
   
   
+  
+  wire [32-1:0] M_rand_num;
+  reg [1-1:0] M_rand_next;
+  reg [32-1:0] M_rand_seed;
+  pn_gen_3 rand (
+    .clk(clk),
+    .rst(rst),
+    .next(M_rand_next),
+    .seed(M_rand_seed),
+    .num(M_rand_num)
+  );
+  wire [16-1:0] M_ctr_value;
+  reg [1-1:0] M_ctr_start;
+  counter_5 ctr (
+    .clk(clk),
+    .rst(rst),
+    .start(M_ctr_start),
+    .value(M_ctr_value)
+  );
+  wire [16-1:0] M_countdown_value;
+  reg [1-1:0] M_countdown_start;
+  counter_6 countdown (
+    .clk(clk),
+    .rst(rst),
+    .start(M_countdown_start),
+    .value(M_countdown_value)
+  );
+  localparam ADD_state = 1'd0;
+  localparam MUL_state = 1'd1;
+  
+  reg M_state_d, M_state_q = ADD_state;
+  reg [15:0] M_score1_d, M_score1_q = 1'h0;
+  reg [15:0] M_score2_d, M_score2_q = 1'h0;
+  reg [7:0] M_nextTime_d, M_nextTime_q = 1'h0;
   
   wire [16-1:0] M_alu_alu;
   wire [1-1:0] M_alu_z;
@@ -22,7 +62,7 @@ module score_2 (
   reg [6-1:0] M_alu_alufn;
   reg [16-1:0] M_alu_a;
   reg [16-1:0] M_alu_b;
-  alu_10 alu (
+  alu_18 alu (
     .alufn(M_alu_alufn),
     .a(M_alu_a),
     .b(M_alu_b),
@@ -32,73 +72,125 @@ module score_2 (
     .n(M_alu_n)
   );
   
-  localparam ADD_state = 1'd0;
-  localparam MUL_state = 1'd1;
-  
-  reg M_state_d, M_state_q = ADD_state;
-  reg [9:0] M_score1_d, M_score1_q = 1'h0;
-  reg [9:0] M_score2_d, M_score2_q = 1'h0;
-  
   always @* begin
+    M_state_d = M_state_q;
+    M_nextTime_d = M_nextTime_q;
+    M_score2_d = M_score2_q;
     M_score1_d = M_score1_q;
     
     M_alu_alufn = 4'bzzzz;
     M_alu_a = 1'h0;
     M_alu_b = 1'h0;
+    M_rand_seed = 6'h27;
+    M_rand_next = 1'h1;
+    M_countdown_start = 1'h0;
+    M_ctr_start = start;
+    ready = 1'h0;
+    if (clear == 1'h1) begin
+      M_score1_d = 1'h0;
+      M_score2_d = 1'h0;
+    end
+    if (init == 1'h1) begin
+      M_countdown_start = ctdstart;
+      M_score1_d = M_countdown_value;
+      M_score2_d = M_countdown_value;
+    end
+    if (M_countdown_value == 1'h0) begin
+      M_score1_d = 1'h0;
+      M_score2_d = 1'h0;
+      M_nextTime_d = M_ctr_value - 3'h5 - M_rand_num[0+3-:4];
+      M_state_d = ADD_state;
+      ready = 1'h1;
+    end
     scr1 = M_score1_q;
     scr2 = M_score2_q;
+    scrState = 1'bz;
+    if (M_state_q == ADD_state) begin
+      scrState = 1'h0;
+    end
+    if (M_state_q == MUL_state) begin
+      scrState = 1'h1;
+    end
+    if (M_score1_q > 10'h3e7) begin
+      M_score1_d = 10'h3e7;
+    end
+    if (M_score1_q < 1'h0) begin
+      M_score1_d = 1'h0;
+    end
+    if (M_score2_q > 10'h3e7) begin
+      M_score2_d = 10'h3e7;
+    end
+    if (M_score2_q < 1'h0) begin
+      M_score2_d = 1'h0;
+    end
     
     case (M_state_q)
       ADD_state: begin
         if (p1 == 1'h1) begin
-          M_alu_alufn = 1'h0;
+          M_alu_alufn = 6'h00;
           M_alu_a = M_score1_q;
-          M_alu_b = 1'h1;
-          M_score1_d = M_alu_z;
+          M_alu_b = 16'h0001;
+          M_score1_d = M_alu_alu;
         end
         if (p2 == 1'h1) begin
-          M_alu_alufn = 1'h0;
-          M_alu_a = M_score1_q;
-          M_alu_b = 1'h1;
-          M_score1_d = M_alu_z;
+          M_alu_alufn = 6'h00;
+          M_alu_a = M_score2_q;
+          M_alu_b = 16'h0001;
+          M_score2_d = M_alu_alu;
         end
-        if (p1 == 2'h2) begin
-          M_alu_alufn = 1'h1;
-          M_alu_a = M_score1_q;
-          M_alu_b = 1'h1;
-          M_score1_d = M_alu_z;
+        if (M_score1_q != 1'h0) begin
+          if (p1 == 2'h2) begin
+            M_alu_alufn = 6'h01;
+            M_alu_a = M_score1_q;
+            M_alu_b = 1'h1;
+            M_score1_d = M_alu_alu;
+          end
         end
-        if (p2 == 2'h2) begin
-          M_alu_alufn = 1'h1;
-          M_alu_a = M_score1_q;
-          M_alu_b = 1'h1;
-          M_score1_d = M_alu_z;
+        if (M_score2_q != 1'h0) begin
+          if (p2 == 2'h2) begin
+            M_alu_alufn = 6'h01;
+            M_alu_a = M_score2_q;
+            M_alu_b = 16'h0001;
+            M_score2_d = M_alu_alu;
+          end
+        end
+        if (M_ctr_value[0+7-:8] <= M_nextTime_q) begin
+          M_state_d = MUL_state;
+          M_nextTime_d = M_ctr_value - 2'h2 - M_rand_num[0+1-:2];
         end
       end
       MUL_state: begin
         if (p1 == 1'h1) begin
-          M_alu_alufn = 17'h186a0;
+          M_alu_alufn = 6'h20;
           M_alu_a = M_score1_q;
-          M_alu_b = 2'h2;
-          M_score1_d = M_alu_z;
+          M_alu_b = 16'h0001;
+          M_score1_d = M_alu_alu;
         end
         if (p2 == 1'h1) begin
-          M_alu_alufn = 17'h186a0;
-          M_alu_a = M_score1_q;
-          M_alu_b = 2'h2;
-          M_score1_d = M_alu_z;
+          M_alu_alufn = 6'h20;
+          M_alu_a = M_score2_q;
+          M_alu_b = 16'h0001;
+          M_score2_d = M_alu_alu;
         end
-        if (p1 == 2'h2) begin
-          M_alu_alufn = 17'h186a1;
-          M_alu_a = M_score1_q;
-          M_alu_b = 2'h2;
-          M_score1_d = M_alu_z;
+        if (M_score1_q != 1'h0) begin
+          if (p1 == 2'h2) begin
+            M_alu_alufn = 6'h21;
+            M_alu_a = M_score1_q;
+            M_alu_b = 16'h0001;
+            M_score1_d = M_alu_alu;
+          end
         end
-        if (p2 == 2'h2) begin
-          M_alu_alufn = 17'h186a1;
-          M_alu_a = M_score1_q;
-          M_alu_b = 2'h2;
-          M_score1_d = M_alu_z;
+        if (M_score2_q != 1'h0) begin
+          if (p2 == 2'h2) begin
+            M_alu_alufn = 6'h21;
+            M_alu_a = M_score2_q;
+            M_alu_b = 16'h0001;
+            M_score2_d = M_alu_alu;
+          end
+        end
+        if (M_ctr_value <= M_nextTime_q) begin
+          M_state_d = ADD_state;
+          M_nextTime_d = M_ctr_value - 3'h5 - M_rand_num[0+3-:4];
         end
       end
     endcase
@@ -108,10 +200,12 @@ module score_2 (
     if (rst == 1'b1) begin
       M_score1_q <= 1'h0;
       M_score2_q <= 1'h0;
+      M_nextTime_q <= 1'h0;
       M_state_q <= 1'h0;
     end else begin
       M_score1_q <= M_score1_d;
       M_score2_q <= M_score2_d;
+      M_nextTime_q <= M_nextTime_d;
       M_state_q <= M_state_d;
     end
   end

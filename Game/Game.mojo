@@ -16,5 +16,7 @@
     <component>pn_gen.luc</component>
     <component>decoder.luc</component>
     <component>reset_conditioner.luc</component>
+    <component>pipeline.luc</component>
+    <component>button_conditioner.luc</component>
   </files>
 </project>

@@ -20,7 +20,9 @@ module mojo_top_0 (
     input bb1,
     input bb2,
     input by1,
-    input by2
+    input by2,
+    output reg add_led,
+    output reg mul_led
   );
   
   
@@ -31,8 +33,6 @@ module mojo_top_0 (
   
   reg [15:0] time_tens;
   
-  reg start;
-  
   wire [1-1:0] M_reset_cond_out;
   reg [1-1:0] M_reset_cond_in;
   reset_conditioner_1 reset_cond (
@@ -40,17 +40,29 @@ module mojo_top_0 (
     .in(M_reset_cond_in),
     .out(M_reset_cond_out)
   );
-  wire [10-1:0] M_score_scr1;
-  wire [10-1:0] M_score_scr2;
-  reg [1-1:0] M_score_p1;
-  reg [1-1:0] M_score_p2;
+  wire [16-1:0] M_score_scr1;
+  wire [16-1:0] M_score_scr2;
+  wire [1-1:0] M_score_scrState;
+  wire [1-1:0] M_score_ready;
+  reg [3-1:0] M_score_p1;
+  reg [3-1:0] M_score_p2;
+  reg [1-1:0] M_score_init;
+  reg [1-1:0] M_score_start;
+  reg [1-1:0] M_score_clear;
+  reg [1-1:0] M_score_ctdstart;
   score_2 score (
     .clk(clk),
     .rst(rst),
     .p1(M_score_p1),
     .p2(M_score_p2),
+    .init(M_score_init),
+    .start(M_score_start),
+    .clear(M_score_clear),
+    .ctdstart(M_score_ctdstart),
     .scr1(M_score_scr1),
-    .scr2(M_score_scr2)
+    .scr2(M_score_scr2),
+    .scrState(M_score_scrState),
+    .ready(M_score_ready)
   );
   wire [32-1:0] M_pn_gen_num;
   reg [1-1:0] M_pn_gen_next;
@@ -62,21 +74,31 @@ module mojo_top_0 (
     .seed(M_pn_gen_seed),
     .num(M_pn_gen_num)
   );
-  wire [16-1:0] M_ctr_value;
-  counter_4 ctr (
-    .clk(clk),
-    .rst(rst),
-    .value(M_ctr_value)
-  );
   wire [7-1:0] M_all_segs_seg;
   wire [8-1:0] M_all_segs_sel;
   reg [32-1:0] M_all_segs_values;
-  multi_seven_seg_5 all_segs (
+  multi_seven_seg_4 all_segs (
     .clk(clk),
     .rst(rst),
     .values(M_all_segs_values),
     .seg(M_all_segs_seg),
     .sel(M_all_segs_sel)
+  );
+  wire [16-1:0] M_ctr_value;
+  reg [1-1:0] M_ctr_start;
+  counter_5 ctr (
+    .clk(clk),
+    .rst(rst),
+    .start(M_ctr_start),
+    .value(M_ctr_value)
+  );
+  wire [16-1:0] M_countdown_value;
+  reg [1-1:0] M_countdown_start;
+  counter_6 countdown (
+    .clk(clk),
+    .rst(rst),
+    .start(M_countdown_start),
+    .value(M_countdown_value)
   );
   localparam IDLE_state = 3'd0;
   localparam RAND_state = 3'd1;
@@ -86,43 +108,70 @@ module mojo_top_0 (
   
   reg [2:0] M_state_d, M_state_q = IDLE_state;
   reg [0:0] M_buttonb1_d, M_buttonb1_q = 1'h0;
-  reg [0:0] M_buttonb1r_d, M_buttonb1r_q = 1'h0;
   reg [0:0] M_buttonb2_d, M_buttonb2_q = 1'h0;
-  reg [0:0] M_buttonb2r_d, M_buttonb2r_q = 1'h0;
   reg [0:0] M_buttony1_d, M_buttony1_q = 1'h0;
-  reg [0:0] M_buttony1r_d, M_buttony1r_q = 1'h0;
   reg [0:0] M_buttony2_d, M_buttony2_q = 1'h0;
-  reg [0:0] M_buttony2r_d, M_buttony2r_q = 1'h0;
   reg [9:0] M_p1_hundreds_d, M_p1_hundreds_q = 1'h0;
   reg [9:0] M_p1_tens_d, M_p1_tens_q = 1'h0;
   reg [9:0] M_p1_ones_d, M_p1_ones_q = 1'h0;
   reg [9:0] M_p2_hundreds_d, M_p2_hundreds_q = 1'h0;
   reg [9:0] M_p2_tens_d, M_p2_tens_q = 1'h0;
   reg [9:0] M_p2_ones_d, M_p2_ones_q = 1'h0;
+  reg [0:0] M_start_d, M_start_q = 1'h0;
+  reg [0:0] M_startcd_d, M_startcd_q = 1'h0;
+  reg [0:0] M_scoretime_d, M_scoretime_q = 1'h0;
+  wire [1-1:0] M_bb1_conditioner_out;
+  reg [1-1:0] M_bb1_conditioner_in;
+  button_conditioner_7 bb1_conditioner (
+    .clk(clk),
+    .in(M_bb1_conditioner_in),
+    .out(M_bb1_conditioner_out)
+  );
+  wire [1-1:0] M_bb2_conditioner_out;
+  reg [1-1:0] M_bb2_conditioner_in;
+  button_conditioner_7 bb2_conditioner (
+    .clk(clk),
+    .in(M_bb2_conditioner_in),
+    .out(M_bb2_conditioner_out)
+  );
+  wire [1-1:0] M_by1_conditioner_out;
+  reg [1-1:0] M_by1_conditioner_in;
+  button_conditioner_7 by1_conditioner (
+    .clk(clk),
+    .in(M_by1_conditioner_in),
+    .out(M_by1_conditioner_out)
+  );
+  wire [1-1:0] M_by2_conditioner_out;
+  reg [1-1:0] M_by2_conditioner_in;
+  button_conditioner_7 by2_conditioner (
+    .clk(clk),
+    .in(M_by2_conditioner_in),
+    .out(M_by2_conditioner_out)
+  );
   wire [1-1:0] M_bb1_e_out;
   reg [1-1:0] M_bb1_e_in;
-  edge_detector_6 bb1_e (
+  edge_detector_11 bb1_e (
     .clk(clk),
     .in(M_bb1_e_in),
     .out(M_bb1_e_out)
   );
   wire [1-1:0] M_bb2_e_out;
   reg [1-1:0] M_bb2_e_in;
-  edge_detector_6 bb2_e (
+  edge_detector_11 bb2_e (
     .clk(clk),
     .in(M_bb2_e_in),
     .out(M_bb2_e_out)
   );
   wire [1-1:0] M_by1_e_out;
   reg [1-1:0] M_by1_e_in;
-  edge_detector_6 by1_e (
+  edge_detector_11 by1_e (
     .clk(clk),
     .in(M_by1_e_in),
     .out(M_by1_e_out)
   );
   wire [1-1:0] M_by2_e_out;
   reg [1-1:0] M_by2_e_in;
-  edge_detector_6 by2_e (
+  edge_detector_11 by2_e (
     .clk(clk),
     .in(M_by2_e_in),
     .out(M_by2_e_out)
@@ -132,31 +181,37 @@ module mojo_top_0 (
     M_state_d = M_state_q;
     M_p2_tens_d = M_p2_tens_q;
     M_p2_hundreds_d = M_p2_hundreds_q;
-    M_p1_ones_d = M_p1_ones_q;
-    M_p1_tens_d = M_p1_tens_q;
     M_p1_hundreds_d = M_p1_hundreds_q;
-    M_buttony1r_d = M_buttony1r_q;
-    M_buttonb1r_d = M_buttonb1r_q;
-    M_buttonb2r_d = M_buttonb2r_q;
-    M_p2_ones_d = M_p2_ones_q;
-    M_buttonb1_d = M_buttonb1_q;
+    M_startcd_d = M_startcd_q;
+    M_start_d = M_start_q;
+    M_p1_ones_d = M_p1_ones_q;
+    M_scoretime_d = M_scoretime_q;
+    M_p1_tens_d = M_p1_tens_q;
     M_buttony1_d = M_buttony1_q;
+    M_buttonb1_d = M_buttonb1_q;
+    M_p2_ones_d = M_p2_ones_q;
     M_buttony2_d = M_buttony2_q;
-    M_buttony2r_d = M_buttony2r_q;
     M_buttonb2_d = M_buttonb2_q;
     
-    M_bb1_e_in = bb1;
-    M_bb2_e_in = bb2;
-    M_by1_e_in = by1;
-    M_by2_e_in = by2;
     M_reset_cond_in = ~rst_n;
     rst = M_reset_cond_out;
+    M_ctr_start = M_start_q;
+    M_score_start = M_start_q;
+    M_countdown_start = M_startcd_q;
+    M_bb1_conditioner_in = bb1;
+    M_bb2_conditioner_in = bb2;
+    M_by1_conditioner_in = by1;
+    M_by2_conditioner_in = by2;
+    M_bb1_e_in = M_bb1_conditioner_out;
+    M_bb2_e_in = M_bb2_conditioner_out;
+    M_by1_e_in = M_by1_conditioner_out;
+    M_by2_e_in = M_by2_conditioner_out;
     led = 8'h00;
     spi_miso = 1'bz;
     spi_channel = 4'bzzzz;
     avr_rx = 1'bz;
     M_pn_gen_seed = 6'h27;
-    M_pn_gen_next = 1'h0;
+    M_pn_gen_next = 1'h1;
     time_tens = M_ctr_value / 4'ha;
     time_ones = M_ctr_value - time_tens * 4'ha;
     M_p1_hundreds_d = M_score_scr1 / 7'h64;
@@ -170,42 +225,38 @@ module mojo_top_0 (
     io_sel[0+7-:8] = ~M_all_segs_sel;
     M_score_p1 = 1'h0;
     M_score_p2 = 1'h0;
+    M_score_init = 1'h0;
+    M_score_clear = 1'h0;
+    add_led = 1'h0;
+    mul_led = 1'h0;
+    M_score_ctdstart = M_scoretime_q;
+    if (M_score_scrState == 1'h0) begin
+      add_led = 1'h1;
+    end
+    if (M_score_scrState == 1'h1) begin
+      mul_led = 1'h1;
+    end
     bb1_led = M_buttonb1_q;
     bb2_led = M_buttonb2_q;
     by1_led = M_buttony1_q;
     by2_led = M_buttony2_q;
-    if (M_bb1_e_out == 1'h1 && M_buttonb1r_q == 1'h1) begin
+    if (M_bb1_e_out == 1'h1) begin
       M_buttonb1_d = 1'h1;
-      M_buttonb1r_d = 1'h0;
     end
-    if (M_bb1_e_out == 1'h0 && M_buttonb1r_q == 1'h0 && M_buttonb1_q == 1'h0) begin
-      M_buttonb1r_d = 1'h1;
-    end
-    if (M_bb2_e_out == 1'h1 && M_buttonb2r_q == 1'h1) begin
+    if (M_bb2_e_out == 1'h1) begin
       M_buttonb2_d = 1'h1;
-      M_buttonb2r_d = 1'h0;
     end
-    if (M_bb2_e_out == 1'h0 && M_buttonb2r_q == 1'h0 && M_buttonb2_q == 1'h0) begin
-      M_buttonb2r_d = 1'h1;
-    end
-    if (M_by1_e_out == 1'h1 && M_buttony1r_q == 1'h1) begin
+    if (M_by1_e_out == 1'h1) begin
       M_buttony1_d = 1'h1;
-      M_buttony1r_d = 1'h0;
     end
-    if (M_by1_e_out == 1'h0 && M_buttony1r_q == 1'h0 && M_buttony1_q == 1'h0) begin
-      M_buttony1r_d = 1'h1;
-    end
-    if (M_by2_e_out == 1'h1 && M_buttony2r_q == 1'h1) begin
+    if (M_by2_e_out == 1'h1) begin
       M_buttony2_d = 1'h1;
-      M_buttony2r_d = 1'h0;
-    end
-    if (M_by2_e_out == 1'h0 && M_buttony2r_q == 1'h0 && M_buttony2_q == 1'h0) begin
-      M_buttony2r_d = 1'h1;
     end
     
     case (M_state_q)
       IDLE_state: begin
-        led[0+0-:1] = 1'h1;
+        M_start_d = 1'h0;
+        M_startcd_d = 1'h0;
         if (M_buttonb1_q == 1'h1 && M_buttonb2_q == 1'h1 && M_buttony1_q == 1'h1 && M_buttony2_q == 1'h1) begin
           M_state_d = RAND_state;
           M_buttonb1_d = 1'h0;
@@ -215,58 +266,52 @@ module mojo_top_0 (
         end
       end
       RAND_state: begin
-        led[1+0-:1] = 1'h1;
-        start = 1'h1;
+        M_scoretime_d = 1'h1;
+        M_score_init = 1'h1;
         M_pn_gen_next = 1'h1;
-        if (M_pn_gen_num[14+0-:1] == 1'h0) begin
-          M_state_d = B_state;
-        end else begin
-          M_state_d = Y_state;
+        if (M_score_ready == 1'h1) begin
+          M_start_d = 1'h1;
+          M_scoretime_d = 1'h0;
+          if (M_pn_gen_num[14+0-:1] == 1'h0) begin
+            M_state_d = B_state;
+          end else begin
+            M_state_d = Y_state;
+          end
         end
       end
       B_state: begin
-        led[2+0-:1] = 1'h1;
-        if (M_score_scr1 == 7'h63) begin
+        if (M_score_scr1 >= 10'h3e7 || M_score_scr2 >= 10'h3e7 || M_ctr_value == 1'h0) begin
           M_state_d = END_state;
-        end
-        if (M_score_scr2 == 7'h63) begin
-          M_state_d = END_state;
-        end
-        if (M_ctr_value == 1'h0) begin
-          M_state_d = END_state;
+          M_countdown_start = 1'h1;
+          M_start_d = 1'h0;
         end else begin
           if (M_buttonb1_q == 1'h1) begin
-            M_score_p1 = 2'h2;
+            M_score_p1 = 1'h1;
             M_buttonb1_d = 1'h0;
             M_state_d = Y_state;
           end
           if (M_buttonb2_q == 1'h1) begin
-            M_score_p2 = 2'h2;
+            M_score_p2 = 1'h1;
             M_buttonb2_d = 1'h0;
             M_state_d = Y_state;
           end
           if (M_buttony1_q == 1'h1) begin
-            M_score_p1 = 1'h1;
+            M_score_p1 = 2'h2;
             M_buttony1_d = 1'h0;
             M_state_d = Y_state;
           end
           if (M_buttony2_q == 1'h1) begin
-            M_score_p2 = 1'h1;
+            M_score_p2 = 2'h2;
             M_buttony2_d = 1'h0;
             M_state_d = Y_state;
           end
         end
       end
       Y_state: begin
-        led[3+0-:1] = 1'h1;
-        if (M_score_scr1 == 7'h63) begin
+        if (M_score_scr1 >= 10'h3e7 || M_score_scr2 >= 10'h3e7 || M_ctr_value == 1'h0) begin
           M_state_d = END_state;
-        end
-        if (M_score_scr2 == 7'h63) begin
-          M_state_d = END_state;
-        end
-        if (M_ctr_value == 1'h0) begin
-          M_state_d = END_state;
+          M_countdown_start = 1'h1;
+          M_start_d = 1'h0;
         end else begin
           if (M_buttonb1_q == 1'h1) begin
             M_score_p1 = 2'h2;
@@ -291,12 +336,18 @@ module mojo_top_0 (
         end
       end
       END_state: begin
-        if (M_score_scr1 > M_score_scr2) begin
-          led[0+0-:1] = 1'h1;
-        end else begin
-          led[1+0-:1] = 1'h1;
+        M_startcd_d = 1'h1;
+        if (M_countdown_value == 1'h0) begin
+          M_state_d = IDLE_state;
+          M_score_clear = 1'h1;
         end
-        M_state_d = IDLE_state;
+        if (M_score_scr1 > M_score_scr2) begin
+          bb1_led = 1'h1;
+          by1_led = 1'h1;
+        end else begin
+          bb2_led = 1'h1;
+          by2_led = 1'h1;
+        end
       end
     endcase
   end
@@ -304,35 +355,33 @@ module mojo_top_0 (
   always @(posedge clk) begin
     if (rst == 1'b1) begin
       M_buttonb1_q <= 1'h0;
-      M_buttonb1r_q <= 1'h0;
       M_buttonb2_q <= 1'h0;
-      M_buttonb2r_q <= 1'h0;
       M_buttony1_q <= 1'h0;
-      M_buttony1r_q <= 1'h0;
       M_buttony2_q <= 1'h0;
-      M_buttony2r_q <= 1'h0;
       M_p1_hundreds_q <= 1'h0;
       M_p1_tens_q <= 1'h0;
       M_p1_ones_q <= 1'h0;
       M_p2_hundreds_q <= 1'h0;
       M_p2_tens_q <= 1'h0;
       M_p2_ones_q <= 1'h0;
+      M_start_q <= 1'h0;
+      M_startcd_q <= 1'h0;
+      M_scoretime_q <= 1'h0;
       M_state_q <= 1'h0;
     end else begin
       M_buttonb1_q <= M_buttonb1_d;
-      M_buttonb1r_q <= M_buttonb1r_d;
       M_buttonb2_q <= M_buttonb2_d;
-      M_buttonb2r_q <= M_buttonb2r_d;
       M_buttony1_q <= M_buttony1_d;
-      M_buttony1r_q <= M_buttony1r_d;
       M_buttony2_q <= M_buttony2_d;
-      M_buttony2r_q <= M_buttony2r_d;
       M_p1_hundreds_q <= M_p1_hundreds_d;
       M_p1_tens_q <= M_p1_tens_d;
       M_p1_ones_q <= M_p1_ones_d;
       M_p2_hundreds_q <= M_p2_hundreds_d;
       M_p2_tens_q <= M_p2_tens_d;
       M_p2_ones_q <= M_p2_ones_d;
+      M_start_q <= M_start_d;
+      M_startcd_q <= M_startcd_d;
+      M_scoretime_q <= M_scoretime_d;
       M_state_q <= M_state_d;
     end
   end

@@ -7,7 +7,6 @@ module mojo_top (
     output avr_rx,          // AVR RX (FPGA TX)
     output io_seg [8],      // 7-segment LEDs on IO Shield
     output io_sel [8],      // Digit select on IO Shield
-    //output button_led[4],
     output bb1_led,
     output bb2_led,
     output by1_led,
@@ -15,61 +14,75 @@ module mojo_top (
     input bb1,              // blue button for player1
     input bb2,              // blue button for player2
     input by1,              // yellow button for player1
-    input by2              // yellow button for player2
-    //input start
+    input by2,              // yellow button for player2
+    output add_led,
+    output mul_led
   ) {
   
   sig rst;                  // reset signal
   sig time_ones [16];
   sig time_tens [16];
-  sig start;
-  
+        
   .clk(clk) {
     // The reset conditioner is used to synchronize the reset signal to the FPGA
     // clock. This ensures the entire FPGA comes out of reset at the same time.
     reset_conditioner reset_cond;
+    
     .rst(rst){
       score score;
-      pn_gen pn_gen;
-      counter ctr (#SIZE(16), #TOP(99), #DIV(22), #UP(0));    // COUNTER: connect counter to reset signal and clk      
+      pn_gen pn_gen;     
       multi_seven_seg all_segs;                           // SEVEN SEGMENT: connect seven_segs to reset signal and clk
-      //multi_seven_seg player_2_seg;
-      //multi_seven_seg timer_seg;
+      counter ctr (#SIZE(16), #TOP(99), #DIV(26), #UP(0));    // COUNTER: connect counter to reset signal and clk
+      counter countdown (#SIZE(16), #TOP(5), #DIV(26), #UP(0));
             
       fsm state = {IDLE, RAND, B, Y, END}; // define all states
       dff buttonb1[1]; // store button press until used
-      dff buttonb1r[1]; // store if button is ready
       dff buttonb2[1];
-      dff buttonb2r[1];
       dff buttony1[1];
-      dff buttony1r[1];
       dff buttony2[1];
-      dff buttony2r[1];
+      
       dff p1_hundreds[10];
       dff p1_tens[10];
       dff p1_ones[10];
       dff p2_hundreds[10];
       dff p2_tens[10];
       dff p2_ones[10];
+      
+      dff start[1];
+      dff startcd[1];
+      dff scoretime[1];
+      
+      //dff counter_reset;
+       
     }
+    button_conditioner bb1_conditioner;
+    button_conditioner bb2_conditioner;
+    button_conditioner by1_conditioner;
+    button_conditioner by2_conditioner;
     edge_detector bb1_e;
     edge_detector bb2_e;
     edge_detector by1_e;
     edge_detector by2_e;
-    /*
-    .start(start) {
-          counter ctr;
-    }*/
-  }
+  }  
     
   always {
-    bb1_e.in = bb1;
-    bb2_e.in = bb2;
-    by1_e.in = by1;
-    by2_e.in = by2;
-    
     reset_cond.in = ~rst_n; // input raw inverted reset signal
     rst = reset_cond.out;   // conditioned reset
+    
+    /* COUNTER VARIABLES*/
+    ctr.start = start.q;
+    score.start = start.q;
+    countdown.start = startcd.q;
+    
+    bb1_conditioner.in = bb1;
+    bb2_conditioner.in = bb2;
+    by1_conditioner.in = by1;
+    by2_conditioner.in = by2;
+    
+    bb1_e.in = bb1_conditioner.out;
+    bb2_e.in = bb2_conditioner.out;
+    by1_e.in = by1_conditioner.out;
+    by2_e.in = by2_conditioner.out;
     
     led = 8h00;             // turn LEDs off
     spi_miso = bz;          // not using SPI
@@ -78,34 +91,35 @@ module mojo_top (
     
     /*FOR RAND GEN*/
     pn_gen.seed = 39;
-    pn_gen.next = 0;
+    pn_gen.next = 1;
     
     /*FOR SEVEN SEG*/
     time_tens = ctr.value/d10;
     time_ones = ctr.value - time_tens*d10;
+    
     p1_hundreds.d = score.scr1/d100;
     p1_tens.d = (score.scr1-(p1_hundreds.q*d100))/d10;
     p1_ones.d = score.scr1 - p1_tens.q*d10;
+    
     p2_hundreds.d = score.scr2/d100;
     p2_tens.d = (score.scr2-(p2_hundreds.q*d100))/d10;
-    //p2_tens.d = score.scr2/d10;
     p2_ones.d = score.scr2 - p2_tens.q*d10;
-    //timer_seg.values = {ctr.value[11:8], time_tens[3:0], time_ones[3:0]};    //SEVEN SEGMENT - INPUT: 4-bit numbers
     all_segs.values = {time_tens[3:0], time_ones[3:0], p2_hundreds.q[3:0], p2_tens.q[3:0], p2_ones.q[3:0], p1_hundreds.q[3:0], p1_tens.q[3:0], p1_ones.q[3:0]};    //SEVEN SEGMENT - INPUT: 4-bit numbers
-    //player_2_seg.values = {ctr.value[11:8], p2_tens.q[3:0], p2_ones.q[3:0]};    //SEVEN SEGMENT - INPUT: 4-bit numbers
-    
      
     io_seg = ~all_segs.seg;           // SEVEN SEGMENT: connect segments to counter
-    //io_seg = ~player_2_seg.seg;           // SEVEN SEGMENT: connect segments to counter
-    //io_seg = ~timer_seg.seg;
     
     io_sel[7:0] = ~all_segs.sel;      // SEVEN SEGMENT: connect digit select to the driver
-    //io_sel[5:3] = ~player_2_seg.sel;      // SEVEN SEGMENT: connect digit select to the driver
-    //io_sel[7:6] = ~timer_seg.sel;
     
     /*FOR SCORE*/
-    score.p1 = 0;
-    score.p2 = 0;
+    score.p1 = 0; // default state 
+    score.p2 = 0; // default state
+    score.init = 0; // default state
+    score.clear = 0;
+    add_led = 0; // turn off led
+    mul_led = 0; // turn off led
+    score.ctdstart = scoretime.q;
+    if (score.scrState == 0){add_led = 1;}
+    if (score.scrState == 1){mul_led = 1;}
     
     bb1_led = buttonb1.q;
     bb2_led = buttonb2.q;
@@ -114,42 +128,30 @@ module mojo_top (
     
     /*BUTTON CONDITONER*/
     /*FOR BUTTON BLUE 1*/
-    if (bb1_e.out == 1 && buttonb1r.q == 1){
+    if (bb1_e.out == 1 ){
       buttonb1.d = 1;
-      buttonb1r.d = 0;
     }
-    if (bb1_e.out == 0 && buttonb1r.q == 0 && buttonb1.q == 0){
-      buttonb1r.d = 1;
-    }
+    
     /*FOR BUTTON BLUE 2*/    
-    if (bb2_e.out == 1 && buttonb2r.q == 1){
+    if (bb2_e.out == 1 ){
       buttonb2.d = 1;
-      buttonb2r.d = 0;
     }
-    if (bb2_e.out == 0 && buttonb2r.q == 0 && buttonb2.q == 0){
-      buttonb2r.d = 1;
-    }
+    
     /*FOR BUTTON YELLOW 1*/
-    if (by1_e.out == 1 && buttony1r.q == 1){
+    if (by1_e.out == 1 ){
       buttony1.d = 1;
-      buttony1r.d = 0;
     }
-    if (by1_e.out == 0 && buttony1r.q == 0 && buttony1.q == 0){
-      buttony1r.d = 1;
-    }
+
     /*FOR BUTTON YELLOW 2*/
-    if (by2_e.out == 1 && buttony2r.q == 1){
+    if (by2_e.out == 1 ){
       buttony2.d = 1;
-      buttony2r.d = 0;
-    }
-    if (by2_e.out == 0 && buttony2r.q == 0 && buttony2.q == 0){
-      buttony2r.d = 1;
     }
       
     /*FINITE STATE MACHINE*/
     case(state.q){
-      state.IDLE: //default state
-        led[0] = 1;
+      state.IDLE: //default state 
+        start.d = 0; // no timer
+        startcd.d = 0;
         if (buttonb1.q == 1 && buttonb2.q == 1 && buttony1.q == 1 && buttony2.q == 1){ // state game when all buttons are pressed
           state.d = state.RAND;
           buttonb1.d = 0; // reset all button presses
@@ -158,43 +160,49 @@ module mojo_top (
           buttony2.d = 0;
         } 
       state.RAND: //rand state
-        led[1] = 1; 
-        start = 1;
+        scoretime.d = 1; // start countdown for the game
+        score.init = 1; // initialise score dff in score module
         pn_gen.next = 1; // generate new number
-        if (pn_gen.num[14] == 0){state.d = state.B;} // check random number to determine start state
-        else{state.d = state.Y;}
+        if (score.ready == 1){ // retrieve feedback from score module that it is ready to start game
+          start.d = 1; // start 99s counter
+          scoretime.d = 0;
+          if (pn_gen.num[14] == 0){state.d = state.B;} // check random number to determine start state
+          else{state.d = state.Y;}
+        }
       state.B: //blue state button checker
-        led[2] = 1;
-        if (score.scr1 == 99){state.d = state.END;} //end game if a player reaches max score
-        if (score.scr2 == 99){state.d = state.END;}
-        if (ctr.value == 0){state.d = state.END;} //end game if time is up
+        if (score.scr1 >= 999 || score.scr2 >= 999 || ctr.value == 0){ //end game if time is up || score is max
+          state.d = state.END;
+          countdown.start = 1; // start 5s countdown clock
+          start.d = 0;
+        }
         else {
           if (buttonb1.q == 1){
-            score.p1 = 2; //tells score module to modify player1 score
+            score.p1 = 1; //tells score module to modify player1 score
             buttonb1.d = 0;
             state.d = state.Y;
           }
           if (buttonb2.q == 1){
-            score.p2 = 2; //tells score module to modify player2 score
+            score.p2 = 1; //tells score module to modify player2 score
             buttonb2.d = 0;
             state.d = state.Y;
           }
           if (buttony1.q == 1){
-            score.p1 = 1; //tells score module to modify player1 score
+            score.p1 = 2; //tells score module to modify player1 score
             buttony1.d = 0;
             state.d = state.Y;
           }
           if (buttony2.q == 1){
-            score.p2 = 1; //tells score module to modify player2 score
+            score.p2 = 2; //tells score module to modify player2 score
             buttony2.d = 0;
             state.d = state.Y;
           }
-        }        
+        }
       state.Y:
-        led[3] = 1;
-        if (score.scr1 == 99){state.d = state.END;}
-        if (score.scr2 == 99){state.d = state.END;}
-        if (ctr.value == 0){state.d = state.END;}
+        if (score.scr1 >= 999 || score.scr2 >= 999 || ctr.value == 0){ //end game if time is up || score is max
+          state.d = state.END;
+          countdown.start = 1; // start 5s countdown clock
+          start.d = 0;
+        }
         else {
           if (buttonb1.q == 1){
             score.p1 = 2; //tells score module to modify player1 score
@@ -218,9 +226,19 @@ module mojo_top (
           }
         }  
       state.END: // end state
-        if (score.scr1 > score.scr2){led[0] = 1;} //display winner
-        else {led[1] = 1;}
-        state.d = state.IDLE;
+        startcd.d = 1;
+        if (countdown.value == 0){ // change to idle when time is up
+          state.d = state.IDLE;
+          score.clear = 1;
+        }
+        if (score.scr1 > score.scr2){ //display winner
+          bb1_led = 1;
+          by1_led = 1;
+        } 
+        else {
+          bb2_led = 1;
+          by2_led = 1;
+        }
     }
   }
 }
