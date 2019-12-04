@@ -2,8 +2,8 @@ Release 14.7 - xst P.20131013 (nt64)
 Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved.
 --> 
 
-Total REAL time to Xst completion: 0.00 secs
-Total CPU time to Xst completion: 0.07 secs
+Total REAL time to Xst completion: 1.00 secs
+Total CPU time to Xst completion: 0.28 secs
  
 --> Reading design: mojo_top_0.prj
 
@@ -1035,14 +1035,14 @@ Top Level Output File Name         : mojo_top_0.ngc
 
 Primitive and Black Box Usage:
 ------------------------------
-# BELS                             : 2577
+# BELS                             : 2576
 #      GND                         : 22
 #      INV                         : 143
 #      LUT1                        : 118
 #      LUT2                        : 140
 #      LUT3                        : 150
-#      LUT4                        : 154
-#      LUT5                        : 333
+#      LUT4                        : 155
+#      LUT5                        : 331
 #      LUT6                        : 526
 #      MUXCY                       : 513
 #      MUXF7                       : 9
@@ -1073,16 +1073,16 @@ Selected Device : 6slx9tqg144-2
 
 Slice Logic Utilization: 
  Number of Slice Registers:             386  out of  11440     3%  
- Number of Slice LUTs:                 1568  out of   5720    27%  
-    Number used as Logic:              1564  out of   5720    27%  
+ Number of Slice LUTs:                 1567  out of   5720    27%  
+    Number used as Logic:              1563  out of   5720    27%  
     Number used as Memory:                4  out of   1440     0%  
        Number used as SRL:                4
 
 Slice Logic Distribution: 
- Number of LUT Flip Flop pairs used:   1600
-   Number with an unused Flip Flop:    1214  out of   1600    75%  
-   Number with an unused LUT:            32  out of   1600     2%  
-   Number of fully used LUT-FF pairs:   354  out of   1600    22%  
+ Number of LUT Flip Flop pairs used:   1599
+   Number with an unused Flip Flop:    1213  out of   1599    75%  
+   Number with an unused LUT:            32  out of   1599     2%  
+   Number of fully used LUT-FF pairs:   354  out of   1599    22%  
    Number of unique control sets:        26
 
 IO Utilization: 
@@ -1137,7 +1137,7 @@ All values displayed in nanoseconds (ns)
 =========================================================================
 Timing constraint: Default period analysis for Clock 'clk'
   Clock period: 24.152ns (frequency: 41.405MHz)
-  Total number of paths / destination ports: 888689705 / 833
+  Total number of paths / destination ports: 888684897 / 833
 -------------------------------------------------------------------------
 Delay:               24.152ns (Levels of Logic = 22)
   Source:            Maddsub_n0188 (DSP)
@@ -1270,12 +1270,12 @@ clk            |   24.152|         |         |         |
 =========================================================================
 
 
-Total REAL time to Xst completion: 33.00 secs
-Total CPU time to Xst completion: 33.28 secs
+Total REAL time to Xst completion: 34.00 secs
+Total CPU time to Xst completion: 33.88 secs
  
 --> 
 
-Total memory usage is 4572552 kilobytes
+Total memory usage is 4571528 kilobytes
 
 Number of errors   :    0 (   0 filtered)
 Number of warnings :   76 (   0 filtered)

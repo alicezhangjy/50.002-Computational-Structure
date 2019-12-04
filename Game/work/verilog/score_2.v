@@ -111,14 +111,14 @@ module score_2 (
     if (M_state_q == MUL_state) begin
       scrState = 1'h1;
     end
-    if (M_score1_q > 10'h3e7) begin
-      M_score1_d = 10'h3e7;
+    if (M_score1_q > 10'h378) begin
+      M_score1_d = 10'h378;
     end
     if (M_score1_q < 1'h0) begin
       M_score1_d = 1'h0;
     end
-    if (M_score2_q > 10'h3e7) begin
-      M_score2_d = 10'h3e7;
+    if (M_score2_q > 10'h378) begin
+      M_score2_d = 10'h378;
     end
     if (M_score2_q < 1'h0) begin
       M_score2_d = 1'h0;

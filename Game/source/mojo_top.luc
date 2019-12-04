@@ -170,7 +170,7 @@ module mojo_top (
           else{state.d = state.Y;}
         }
       state.B: //blue state button checker
-        if (score.scr1 >= 999 || score.scr2 >= 999 || ctr.value == 0){ //end game if time is up || score is max
+        if (score.scr1 >= 888 || score.scr2 >= 888 || ctr.value == 0){ //end game if time is up || score is max
           state.d = state.END;
           countdown.start = 1; // start 5s countdown clock
           start.d = 0;
@@ -198,7 +198,7 @@ module mojo_top (
           }
         }
       state.Y:
-        if (score.scr1 >= 999 || score.scr2 >= 999 || ctr.value == 0){ //end game if time is up || score is max
+        if (score.scr1 >= 888 || score.scr2 >= 888 || ctr.value == 0){ //end game if time is up || score is max
           state.d = state.END;
           countdown.start = 1; // start 5s countdown clock
           start.d = 0;

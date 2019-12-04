@@ -65,16 +65,16 @@ module score(
     if (state.q == state.ADD){scrState = 0;}
     if (state.q == state.MUL){scrState = 1;}
     
-    if (score1.q > d999) {
-      score1.d = d999;
+    if (score1.q > d888) {
+      score1.d = d888;
     }
     
     if (score1.q < 0) {
       score1.d = 0;
     }
     
-    if (score2.q > d999) {
-      score2.d = d999;
+    if (score2.q > d888) {
+      score2.d = d888;
     }
     
     if (score2.q < 0) {

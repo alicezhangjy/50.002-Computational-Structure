@@ -280,7 +280,7 @@ module mojo_top_0 (
         end
       end
       B_state: begin
-        if (M_score_scr1 >= 10'h3e7 || M_score_scr2 >= 10'h3e7 || M_ctr_value == 1'h0) begin
+        if (M_score_scr1 >= 10'h378 || M_score_scr2 >= 10'h378 || M_ctr_value == 1'h0) begin
           M_state_d = END_state;
           M_countdown_start = 1'h1;
           M_start_d = 1'h0;
@@ -308,7 +308,7 @@ module mojo_top_0 (
         end
       end
       Y_state: begin
-        if (M_score_scr1 >= 10'h3e7 || M_score_scr2 >= 10'h3e7 || M_ctr_value == 1'h0) begin
+        if (M_score_scr1 >= 10'h378 || M_score_scr2 >= 10'h378 || M_ctr_value == 1'h0) begin
           M_state_d = END_state;
           M_countdown_start = 1'h1;
           M_start_d = 1'h0;
