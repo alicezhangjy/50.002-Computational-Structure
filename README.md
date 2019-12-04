@@ -16,7 +16,7 @@ Inspired by this game, we improved it through the following means:
   - Interesting: Players have to strategise when they press their buttons (eg players would not be able to gain points in the Multiplication/ Division if their score is 0, but they can prevent their opponents from gaining points by pressing buttons to change state. 
 
 ### User Interface
-![Game User Interface](https://raw.githubusercontent.com/chengwee/50.002-Computational-Structure/master/images/UserInterface.png)
+![Game User Interface](https://raw.githubusercontent.com/chengwee/50.002-Computational-Structure/master/images/UserInterface.PNG)
 Fig 1: User Interface for Game
 
 The user interface includes 4 buttons, 2 three-digit seven-segments, 2 LEDs and 1 two-digit seven-segment. The 4 buttons consist of 2 for each player (1 yellow and 1 blue), for the user to input. The 2 LEDs indicate the mode of the game (Addition/ Subtraction and Multiplication/ Division). The 2 three-digit seven-segments are used to indicate each player’s score, while the 1 two-digit seven-segment is for the timer. 
